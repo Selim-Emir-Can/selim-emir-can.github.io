@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<!--
+    Massively by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>AM Radio Reciever</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <a href="index.html" class="logo">Selim Emir Can</a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul class="links">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="AM-RADIO.html">AM Radio Reciever</a></li>
+            </ul>
+            <ul class="icons">
+                <li><a href="https://www.linkedin.com/in/selim-emir-can" class="icon brands fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                <li><a href="https://github.com/Selim-Emir-Can/" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main -->
+        <div id="main">
+
+            <!-- Post -->
+            <section class="post">
+
+                <header class="major">
+                    <h1>AM Radio Reciever</h1>
+                    <p>
+                        Learned the fundamentials of amplitude modulation and created an AM Radio Reciever using basic circuits knowledge.
+                    </p>
+                </header>
+                <div class="row">
+                            <div class="col-3"><span></span></div>
+                            <div class="col-6">
+                                <span class="image fit">
+                                    <img src="images/circuit.jpg" alt="" />
+                                    <p><i><b>Figure 1:</b> AM Radio Reciever Circuit implementation</i></p>
+                                </span>
+                            </div>
+                        </div>
+                <div class="image main">
+                    <h2>Summary</h2>
+                    
+                    <p>
+                        FM and AM Radio waves are commonly used to send information across a wide range of
+                        frequencies. AM, or amplitude modulated waves have been used for over a century for
+                        broadcasting and various forms of wireless communication. The construction of an Amplitude
+                        Modulated wave is simple: the amplitude of a carrier signal is varied in proportion with the
+                        information wave and the combined signal is transmitted. These waveforms can be constructed
+                        anywhere between 540kHz-1700 kHz, a frequency range that makes it easy to build a circuit that
+                        can receive the radio wave and detect the information signal.
+                    </p>
+                    <p>
+                        The main goal of our project was to build an AM radio receiver by constructing a circuit
+                        that can wirelessly receive signals within the radio frequency range, and filter out the carrier
+                        wave to recover the information signal. The main circuit components included: an LC tank
+                        circuit with a resonant frequency tuned to 100kHz (the carrier wave frequency), an operational
+                        amplifier to increase the voltage of the received signal, and a diode to rectify the signal,
+                        and an RC circuit to filter out the carrier wave. The resulting output would then be connected
+                        to a speaker which would play the recovered information signal (we chose to use a “Concert A” or
+                        a sine wave with a frequency of 440Hz) we intended to receive. Three different circuits named
+                        Initial Circuit, Audio Detection Circuit, AM Radio Receiver Circuit were built and data was collected
+                        using an Analog Discovery 2 and an application called Waveforms.
+                    </p>
+                    <p>
+                        Overall, the Initial Circuit and the AM Radio Receiver Circuit did not work properly due
+                        to a variety of reasons including the lack of an additional operational amplifier, poor choice of
+                        location to receive signals, and lack of proper material to build a good LC tank circuit. However,
+                        our Audio Detection circuit worked very well and we successfully demodulated
+                        our input signal signal and recovered the information signal.
+                    </p>
+                    <p>
+                        By undertaking this project I learned about the fundamentals of amplitude modulation and how to create an AM Radio Reciever.
+                        My group's project presentation can be found <a href="pdfs/4BL Project Presentation.pdf" target="_blank">here</a> and our final
+                        report can be found <a href="pdfs/4BL Project Report.pdf" target="_blank">here</a>.
+                    </p>
+                </div>
+            </section>
+        </div>
+        <footer id="footer">
+            <section class="split contact">
+                <section class="alt">
+                    <h3>Hometown</h3>
+                    <p>Corning, New York</p>
+                </section>
+                <section>
+                    <h3>Email</h3>
+                    <p><a href="#">emir2903@gmail.com</a></p>
+                </section>
+                <section>
+                    <h3>Social</h3>
+                    <ul class="icons alt">
+                        <li><a href="https://www.linkedin.com/in/selim-emir-can" class="icon brands fa-linkedin" target="_blank"><span class="label">Instagram</span></a></li>
+                        <li><a href="https://github.com/Selim-Emir-Can/" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                    </ul>
+                </section>
+            </section>
+        </footer>
+        <!-- Copyright -->
+        <div id="copyright">
+            <ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+</html>

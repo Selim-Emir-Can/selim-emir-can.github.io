@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<!--
+    Massively by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>Modular Gas Sensor</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <a href="index.html" class="logo">Selim Emir Can</a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul class="links">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="GasSensor.html">Modular Gas Sensor Shell</a></li>
+            </ul>
+            <ul class="icons">
+                <li><a href="https://www.linkedin.com/in/selim-emir-can" class="icon brands fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                <li><a href="https://github.com/Selim-Emir-Can/" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main -->
+        <div id="main">
+
+            <!-- Post -->
+            <section class="post">
+
+                <header class="major">
+                    <h1>Modular Gas Sensor Shell</h1>
+                    <p>
+                        I designed a gas sensor shell to 1) store an array of sensors oriented correctly relative to the gas flow 2) have enough space to
+                        accomadate wiring, a PCB and a headless Raspberry Pi 3) be modular to add/remove sensors if needed.
+                    </p>
+                </header>
+
+                <div class="image main">
+                    <h2>Design Specifications</h2>
+                    <ul>
+                        <li> 1. The PCB and Raspberry Pi should not block gas flow, gas sensors must be properly oriented, and the product must be lightweight (less than 1kg).</li>
+                        <li> 2. The product must be modular and store a PCB, Raspberry Pi Zero 2W, and wirings necessary for all the sensors.</li>
+                        <li> 3. The gas sensor shell can be independently removed without removing the PCB, Raspberry Pi Zero 2W, the wires, and the sensors.</li>
+                    </ul>
+
+                    <h2>Current Design Considerations</h2>
+
+                    <p>
+                        <div class="row">
+                            <div class="col-3"><span></span></div>
+                            <div class="col-6">
+                                <span class="image fit">
+                                    <img src="images/EnoseExplode.jpg" alt="" />
+                                    <p>
+                                        <i>
+                                            <b>Figure 1:</b> The parts on the rightside are "chambers". They are modular and hold the PCB, Raspberry Pi Zero 2W, and all of the sensors.
+                                            The chamber structure is then placed inside the "shell structures" on the leftside which are also modular. The shell structure protects the mentioned components and stores necessary wiring.
+                                            The legs at the bottom hold up the gas sensor.
+                                        </i>
+                                    </p>
+                                </span>
+                            </div>
+                        </div>
+
+                        Currently, the Modular Gas Sensor Shell stores 17 sensors:
+                        <ul>
+                            <li>DFRobot CO2 Sensor V1.2</li>
+                            <li>DHT22 Temperature and Humidity Sensor</li>
+                            <li>DFRobot Ozone Sensor (0-10ppm) v1.0 (I2C)</li>
+                            <li>DFRobot Gravity Formaldehyde (HCHO) Sensor (DAC)</li>
+                            <li>SGP40 VOC (Volatile Organic Compound) Sensor (I2C)</li>
+                            <li>Figaro TGS2611 Air Contaminants Sensor with drive board module</li>
+                            <li>CJMCU-1100 MS-1100 VOC Gas Sensor Module Formaldehyde Benzene Gas Induction</li>
+                            <li>MH-Z14 NDIR CO2 Infrared Sensor Module MH-Z14A Carbon Dioxide Sensor for CO2 (0-5000ppm, Serial Spot PWM)</li>
+                            <li>MQ-2, MQ-3, MQ-4, MQ-5, MQ-6, MQ-7, MQ-8, MQ-9, MQ-135 Smoke Detection liquefied Methane Gas Sensor Module</li>
+                        </ul>
+                        The data gathered from the sensors listed above during the cooking process will constitute a chemical signature which will be used to analyze the cumulative gas concentration
+                        with respect to time. The gas sensor shell stores these sensors, and the hardware which extracts and processes data which includes a custom PCB and a Raspberry Pi Zero 2W.
+                        When designing the gas sensor shell, much consideration was given to requirement 3. Both the chamber and shell structures have "lips" on top of them, making the structure
+                        modular - allowing the use of any amount of gas sensors. One challenge I faced was designing a gas sensor shell that could be removed without removing the Raspberry Pi Zero 2W and the PCB
+                        (these components were stored within the shell in the previous design made by my graduate student mentor). To overcome this, I used the concept of a dummy node from my data structures
+                        and algorithms class: I made a special chamber sturcture that stores the PCB and the Raspberry Pi instead of gas sensors- satisfying requirements 2 and 3. Furthermore, beacuse the PCB and Raspberry Pi are on
+                        the side of the special chamber they do not interfere with the gas flow. The rest of the chambers have various holes on the side where gas sensors will fit and face towards the gas flow.
+                        In addition to all of this, There is a LCD display attached to the topmost gas sensor shell structure which allows the user to view any given gas concentration. There are also rectangular
+                        cutouts on the top and bottom caps of the gas sensor shell which is designed to store fans if the gas flow is not fast enough. Finally, All parts are mode from ABS plastic and have a total mass of 830.70 grams - satisfying requirement 1.
+                        <br /> <br />
+                        <div class="row">
+                            <div class="col-3"><span></span></div>
+                            <div class="col-6">
+                                <span class="image fit">
+                                    <img src="images/GP.jpg" alt="" />
+                                    <p>
+                                        <i>
+                                            <b>Figure 2:</b> The PCB stores a Raspberry Pi Zero 2W, 2 MCP3008 ADC Converters which provide connections to 14 analog gas sensors,
+                                            two I2C connections, and a connection for the temperature and humidty sensor.
+                                        </i>
+                                    </p>
+                                </span>
+                            </div>
+                        </div>
+
+                        The PCB is displayed on figure 2. On the left side of the PCB  are functional buttons that are for general purpose use. One set of buttons will be used for triggering
+                        data collection and stopping data collection. On the upper rightside of the PCB is a power supply aux for an external power source which will power the sensors because
+                        the Raspberry Pi Zero cannot power all the sensors by itself. The bottom part of the PCB are connections for the ADC converters and gas sensors that use the I2C protocol.
+                        The bottom rightside of the PCB has optional transistor and pins that will be used to power a fan if gas flow is not sufficient. THe cut out holes and rectangles on the
+                        top face of the gas sensor shell are made to store the buttons and the power supply aux mentioned here.<br /> <br />
+
+                        <h2>Ending Remarks</h2>
+<p>
+                        A significant portion of this project was configuring the Raspberry Pi Zero 2W system by installing Raspbian Lite, setting up an SSH connection and writing the python script
+                        that will be used for data collection. Modular Gas Sensor Shell CAD files, links to documentation and python files for each sensor, necessary installations, and the python file
+                        that will be used to collect data can be found <a href="https://github.com/Selim-Emir-Can/RoMeLa-YORI-Team-ModularGasSensor" target="_blank">here</a>. I have already 3D printed the
+                        Modular Gas Sensor as of now and will keep updating this webpage. Testing will begin according to the YORI Team schedule and the Modular Gas Sensor will be used by the YORI (RoMeLa) team cooking
+                        robot. Here are links a few links about the cooking robot for anyone who is interested:
+                        <ul>
+                            <li>
+                                <a href="pdfs/Task Planning with Mixed-Integer Programming for Multiple Cooking.pdf" target="_blank">
+                                    Task Planning with Mixed-Integer Programming
+                                    for Multiple Cooking
+                                </a>
+                            </li>
+                            <li>
+                                <a href="pdfs/Minimal Degree of Freedom Dual-Arm Manipulation Platform with Coupling Body Joint for Diverse Cooking Tasks.pdf" target="_blank">
+                                    Minimal
+                                    Degree of Freedom Dual-Arm Manipulation Platform with Coupling Body Joint for Diverse Cooking Tasks
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://spectrum.ieee.org/romela-cooking-robot" target="_blank">YORI: A Hybrid Approach to Robotic Cooking</a>
+                            </li>
+                        </ul>
+                    </p>
+
+                </div>
+            </section>
+        </div>
+        <footer id="footer">
+            <section class="split contact">
+                <section class="alt">
+                    <h3>Hometown</h3>
+                    <p>Corning, New York</p>
+                </section>
+                <section>
+                    <h3>Email</h3>
+                    <p><a href="#">emir2903@gmail.com</a></p>
+                </section>
+                <section>
+                    <h3>Social</h3>
+                    <ul class="icons alt">
+                        <li><a href="https://www.linkedin.com/in/selim-emir-can" class="icon brands fa-linkedin" target="_blank"><span class="label">Instagram</span></a></li>
+                        <li><a href="https://github.com/Selim-Emir-Can/" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                    </ul>
+                </section>
+            </section>
+        </footer>
+        <!-- Copyright -->
+        <div id="copyright">
+            <ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+</html>
