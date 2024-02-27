@@ -1,0 +1,5 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^www\.selim-emir-can\.github.io [NC]
+RewriteRule ^(.*)$ http://selim-emir-can.github.io/$1 [L,R=301]
+</IfModule>
