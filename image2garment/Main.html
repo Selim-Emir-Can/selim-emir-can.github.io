@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image2Garment</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Arial, sans-serif; background:#a6a6a6; color:#fff; display:flex; flex-direction:column; align-items:center; }
+html {
+  scroll-behavior: smooth;
+}
+
+/* Password Protection Styles */
+#password-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+#password-form {
+  background: #333;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+#password-form h2 {
+  margin-bottom: 20px;
+  color: #fff;
+  font-size: 24px;
+}
+
+#password-input {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: 2px solid #555;
+  border-radius: 5px;
+  background: #222;
+  color: #fff;
+  width: 300px;
+  margin-bottom: 15px;
+  outline: none;
+}
+
+#password-input:focus {
+  border-color: #55a7f9;
+}
+
+#password-submit {
+  padding: 12px 30px;
+  font-size: 16px;
+  background: #55a7f9;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#password-submit:hover {
+  background: #4a96e8;
+}
+
+#password-error {
+  color: #ff6b6b;
+  margin-top: 10px;
+  font-size: 14px;
+  display: none;
+}
+
+body.locked #main-content {
+  display: none;
+}
+
+a {
+  color: #55a7f9;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #f59352;
+  text-decoration: underline;
+}
+
+header { text-align:center; padding:20px 20px; }
+header h1 { font-size:32px; max-width:1200px; margin:0 auto; }
+
+section { max-width:1200px; width:100%; margin:0 auto 60px auto; padding:0 20px; }
+section h2 { font-size:28px; margin-bottom:20px; text-align:left; }
+
+.comparison-grid, .comparison-row {
+  display: grid;
+  grid-template-columns: repeat(6, 200px); 
+  gap: 12px; 
+  justify-content: center; 
+  align-items: center;
+  row-gap: 16px; 
+}
+
+.comparison-grid {
+  margin-bottom: 20px; 
+}
+
+.comparison-row {
+  margin-bottom: 24px; 
+}
+
+.comparison-grid .label {
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.static-container {
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #eee;
+  position: relative;
+}
+
+.zoomable {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.05s ease-out;
+}
+
+.comparison-row video {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #222;
+}
+
+.comparison-grid-3, .comparison-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 200px);
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  row-gap: 16px;
+  margin-bottom: 24px;
+}
+
+.comparison-grid-3 .label {
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.comparison-row-3 video {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #222;
+}
+
+.video-placeholder {
+  width:200px;
+  height:200px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:600;
+  border-radius:10px;
+  text-align:center;
+}
+
+#baseline-references {
+  margin-top: 40px;
+}
+
+.reference-list {
+  margin-top: 10px;
+}
+
+.reference-item {
+  display: flex;
+  align-items: flex-start; 
+  margin-bottom: 8px;
+}
+
+.ref-index {
+  width: 30px;           
+  flex-shrink: 0;
+  display: inline-block;
+  line-height: 1.4;
+}
+
+.ref-text {
+  display: inline-block;
+  line-height: 1.4;
+}
+
+@media(max-width:1024px){
+  .comparison-grid, .comparison-row {
+    grid-template-columns: repeat(3, 200px);
+    justify-content: center;
+  }
+}
+@media(max-width:600px){
+  .comparison-grid, .comparison-row {
+    grid-template-columns: 1fr;
+    justify-content: center;
+  }
+}
+</style>
+</head>
+<body class="locked">
+
+<div id="password-overlay">
+  <div id="password-form">
+    <h2>Enter Password</h2>
+    <input type="password" id="password-input" placeholder="Password" autocomplete="off">
+    <br>
+    <button id="password-submit">Submit</button>
+    <div id="password-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<div id="main-content">
+<header>
+<h1>Image2Garment:</h1>
+<h1>Simulation-ready Garments from a Single Image</h1>
+</header>
+
+<section id="comparisons">
+<h2>Baseline Comparisons (Simulations)</h2>
+<div class="comparison-grid">
+  <div class="label">Input Frame</div>
+  <div class="label">DMap* <a href="#ref1">[1]</a></div>
+  <div class="label">AIpparel* <a href="#ref2">[2]</a></div>
+  <div class="label">ChatGarment* <a href="#ref3">[3]</a></div>
+  <div class="label">Ours*</div>
+  <div class="label">GT</div>
+</div>
+
+<div class="comparison-row">
+  <div class="static-container">
+    <img class="zoomable" src="Figures/input_01.png" alt="Static Input">
+  </div>
+  <video autoplay loop muted playsinline src="Videos/jumping_jack_v2dmap_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/jumping_jack_v2AIparrel_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/jumping_jack_v2chatgarment_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/jumping_jack_v2ours_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/jumping_jackgt_rendered_output.mp4"></video>
+</div>
+
+<div class="comparison-row">
+  <div class="static-container">
+    <img class="zoomable" src="Figures/input_02.png" alt="Static Input">
+  </div>
+  <div class="video-placeholder">Draping Failed</div>
+  <video autoplay loop muted playsinline src="Videos/northern_spin_v2AIparrel_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/northern_spin_v2chatgarment_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/northern_spin_v2ours_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/northern_spin_v2gt_rendered_output.mp4"></video>
+</div>
+
+<div class="comparison-row">
+  <div class="static-container">
+    <img class="zoomable" src="Figures/input_03.png" alt="Static Input">
+  </div>
+  <div class="video-placeholder">Draping Failed</div>
+  <video autoplay loop muted playsinline src="Videos/joyful_jumpAIparrel_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/joyful_jumpchatgarment_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/joyful_jumpours_rendered_output.mp4"></video>
+  <video autoplay loop muted playsinline src="Videos/joyful_jumpgt_rendered_output.mp4"></video>
+</div>
+<h4><em>DMap*, AIpparel*, and ChatGarment* use the <u>randomly sampled physical parameters</u>. DMap* uses the only published checkpoint.</em></h4>
+<h4><em>Ours* uses the <u>estimated physics parameters</u> and the same garment geometry as ChatGarment.</em></h4>
+</section>
+
+
+
+<section id="in-the-wild">
+  <h2>In-the-Wild Comparisons (Real Results)</h2>
+
+  <!-- labels -->
+  <div class="comparison-grid-3">
+    <div class="label">ChatGarment* <a href="#ref3">[3]</a></div>
+    <div class="label">Ours</div>
+    <div class="label">GT</div>
+  </div>
+
+  <div class="comparison-row-3">
+    <video autoplay loop muted playsinline src="Videos/01_wild_chatgarment.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/01_wild_ours.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/01_wild_gt.mp4"></video>
+  </div>
+
+  <div class="comparison-row-3">
+    <video autoplay loop muted playsinline src="Videos/02_wild_chatgarment.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/02_wild_ours.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/02_wild_gt.mp4"></video>
+  </div>
+
+  <div class="comparison-row-3">
+    <video autoplay loop muted playsinline src="Videos/03_wild_chatgarment.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/03_wild_ours.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/03_wild_gt.mp4"></video>
+  </div>
+
+</section>
+
+
+
+<section id="ablation-study">
+  <h2>Ablation Study on Physics Parameter Estimation</h2>
+
+  <!-- labels -->
+  <div class="comparison-grid-3">
+    <div class="label">Random Parameters</div>
+    <div class="label">Our Estimated Parameters</div>
+    <div class="label">GT Parameters</div>
+  </div>
+
+  <div class="comparison-row-3">
+    <video autoplay loop muted playsinline src="Videos/jumping_random.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/jumping_estimated.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/jumping_gt.mp4"></video>
+  </div>
+
+  <div class="comparison-row-3">
+    <video autoplay loop muted playsinline src="Videos/northern_random.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/northern_estimated.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/northern_gt.mp4"></video>
+  </div>
+
+  <div class="comparison-row-3">
+    <video autoplay loop muted playsinline src="Videos/jab_random.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/jab_estimated.mp4"></video>
+    <video autoplay loop muted playsinline src="Videos/jab_gt.mp4"></video>
+  </div>
+
+</section>
+
+
+
+<section id="baseline-references">
+  <h2>References</h2>
+  <div class="reference-list">
+    <div class="reference-item" id="ref1">
+      <span class="ref-index">[1]</span>
+      <span class="ref-text">Li Ren, et al. "Single View Garment Reconstruction Using Diffusion Mapping Via Pattern Coordinates." <em>Proceedings of the Special Interest Group on Computer Graphics and Interactive Techniques Conference Conference Papers.</em> 2025.</span>
+    </div>
+
+    <div class="reference-item" id="ref2">
+      <span class="ref-index">[2]</span>
+      <span class="ref-text">Nakayama Kiyohiro, et al. "AIpparel: A Multimodal Foundation Model for Digital Garments." <em>Proceedings of the Computer Vision and Pattern Recognition Conference.</em> 2025.</span>
+    </div>
+
+    <div class="reference-item" id="ref3">
+      <span class="ref-index">[3]</span>
+      <span class="ref-text">Bian Siyuan, et al. "Chatgarment: Garment estimation, generation and editing via large language models." <em>Proceedings of the Computer Vision and Pattern Recognition Conference.</em> 2025.</span>
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+const zoomables = document.querySelectorAll('.zoomable');
+zoomables.forEach(img => {
+  let scale = 1;
+  let offsetX = 0, offsetY = 0;
+  let isDragging = false;
+  let startX = 0, startY = 0;
+
+  img.onload = () => {
+    const container = img.parentElement;
+    const ratio = img.naturalWidth / img.naturalHeight;
+    if(ratio > 1){ img.style.width = '100%'; img.style.height = 'auto'; }
+    else { img.style.height = '100%'; img.style.width = 'auto'; }
+  };
+
+  img.parentElement.addEventListener('wheel', e => {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 1.1 : 0.9;
+    scale *= delta;
+    scale = Math.min(Math.max(1, scale), 5);
+    img.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  });
+
+  img.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX = e.clientX - offsetX;
+    startY = e.clientY - offsetY;
+    img.style.cursor = 'grabbing';
+  });
+
+  window.addEventListener('mousemove', e => {
+    if(!isDragging) return;
+    offsetX = e.clientX - startX;
+    offsetY = e.clientY - startY;
+    img.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  });
+
+  window.addEventListener('mouseup', e => {
+    isDragging = false;
+    img.style.cursor = 'grab';
+  });
+});
+</script>
+
+<script>
+// Password Protection
+const CORRECT_PASSWORD = 'image2garment'; // Change this to your desired password
+
+const passwordOverlay = document.getElementById('password-overlay');
+const passwordInput = document.getElementById('password-input');
+const passwordSubmit = document.getElementById('password-submit');
+const passwordError = document.getElementById('password-error');
+const body = document.body;
+
+// Check if already authenticated in this session
+if (sessionStorage.getItem('authenticated') === 'true') {
+  unlockSite();
+}
+
+function unlockSite() {
+  passwordOverlay.style.display = 'none';
+  body.classList.remove('locked');
+  sessionStorage.setItem('authenticated', 'true');
+}
+
+function checkPassword() {
+  if (passwordInput.value === CORRECT_PASSWORD) {
+    unlockSite();
+  } else {
+    passwordError.style.display = 'block';
+    passwordInput.value = '';
+    passwordInput.focus();
+  }
+}
+
+passwordSubmit.addEventListener('click', checkPassword);
+passwordInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    checkPassword();
+  }
+});
+
+// Focus on input when page loads
+passwordInput.focus();
+</script>
+
+</div>
+
+</body>
+<
