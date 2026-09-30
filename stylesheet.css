@@ -133,3 +133,38 @@ h2 {
 span.highlight {
   background-color: #ffffd0;
 }
+/* Subtle refinements to the original academic layout. */
+body { margin: 0; padding: 30px 18px 18px; color: #252c33; background: #fff; }
+body, td, th, tr, p, a, strong { font-size: 15px; line-height: 1.65; }
+a { color: #23669c; }
+a:hover { color: #174c76; text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid #23669c; outline-offset: 4px; }
+.name { font-size: 34px; font-weight: 600; letter-spacing: -.6px; padding-top: 8px; }
+h2 { font-size: 23px; font-weight: 600; padding-bottom: 9px; border-bottom: 1px solid #e2e7ec; }
+.papertitle { font-size: 15px; line-height: 1.5; }
+p { margin: 14px 0; }
+ul { padding-left: 0; margin: 0 0 16px; }
+ul:last-child { margin-bottom: 0; }
+.one { width: 160px; height: auto; }
+.one img { max-width: 100%; height: auto; }
+.publication-row > td { padding-top: 22px !important; padding-bottom: 22px !important; }
+tr[bgcolor] { background: #f5f8fb; }
+.hoverZoomLink { border: 1px solid #e2e7ec; }
+@media (max-width: 600px) {
+  body { padding: 15px 8px; }
+  body, td, th, tr, p, a, strong { font-size: 14px; }
+  .page { table-layout: fixed; }
+  .page > tbody > .intro-row > td > table:first-child > tbody > tr:first-child { display: flex; flex-direction: column; }
+  .page > tbody > .intro-row > td > table:first-child > tbody > tr:first-child > td { display: block; width: 100% !important; max-width: 100% !important; padding: 12px !important; }
+  .hoverZoomLink { width: 180px !important; margin: 0 auto 15px; }
+  .publication-row { display: block; }
+  .publication-row > td { display: block; width: auto !important; padding: 12px !important; }
+  .publication-row > td:first-child { padding-bottom: 0 !important; }
+  .publication-row .one { width: min(240px, 100%); }
+  td > img { max-width: 100%; height: auto; }
+  a { overflow-wrap: anywhere; }
+  h2 { font-size: 22px; }
+}
+
+.publication-row br + br { display: none; }
+.hoverZoomLink { display: block; }

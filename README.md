@@ -1,1 +1,1 @@
-This is the source code to Selim Emir Can's website which is built upon exsiting code from Jon Barron's public academic website: https://jonbarron.info/.
+Source code for Selim Emir Can's personal academic website.
