@@ -1,472 +1,569 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selim Emir Can</title>
+  <meta name="description" content="Selim Emir Can – M.S. student in Electrical Engineering at Stanford University, working at the Stanford Physical and Spatial Intelligence Lab with Professor Gordon Wetzstein.">
+  <meta name="keywords" content="Selim, Emir, Can, Selim Can, Emir Can, selim-emir-can, Selim-Emir-Can, Stanford, UCLA, Visual Machines Group, computer vision">
+  <meta name="author" content="Selim Emir Can">
+  <meta property="og:title" content="Selim Emir Can">
+  <meta property="og:description" content="M.S. Electrical Engineering · Stanford University">
+  <meta property="og:image" content="https://selim-emir-can.github.io/images/SelimEmirCan.jpg">
+  <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    /* Set theme before paint to avoid a flash */
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <meta charset="UTF-8">
-    <meta name="description" content="Selim Emir Can. I am a recent graduate from the Electrical Engineering Department at University of California,
-    Los Angeles where I worked at the Visual Machines Group (VMG) under Professor Achuta Kadambi">
-    <meta name="keywords" content="Selim, Emir,Can, Selim Can, Emir Can, selim-emir-can, Selim-Emir-Can, selim.can@ucla.edu, emir2903@gmail.com, Visual Machines Group, UCLA">
+    :root {
+      --bg: #faf9f6;
+      --bg-card: #ffffff;
+      --bg-card-hover: #fefefe;
+      --bg-logo: #ffffff;
+      --border: rgba(0, 0, 0, 0.07);
+      --border-hover: rgba(140, 21, 21, 0.25);
+      --text: #1a1a2e;
+      --text-secondary: #4a4a5e;
+      --text-muted: #8b8b9e;
+      --accent: #8c1515;
+      --accent-hover: #b1040e;
+      --accent-soft: rgba(140, 21, 21, 0.25);
+      --accent-bg: rgba(140, 21, 21, 0.04);
+      --nav-bg: rgba(250, 249, 246, 0.85);
+      --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow: 0 4px 20px rgba(0,0,0,0.05);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.08);
+      --max-w: 880px;
+      --nav-h: 56px;
+    }
 
+    [data-theme="dark"] {
+      --bg: #0f0f17;
+      --bg-card: #18182a;
+      --bg-card-hover: #1e1e34;
+      --bg-logo: #f4f4f6;
+      --border: rgba(255, 255, 255, 0.06);
+      --border-hover: rgba(248, 113, 113, 0.35);
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #f87171;
+      --accent-hover: #fca5a5;
+      --accent-soft: rgba(248, 113, 113, 0.3);
+      --accent-bg: rgba(248, 113, 113, 0.08);
+      --nav-bg: rgba(15, 15, 23, 0.8);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.4);
+    }
 
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15.5px;
+      transition: background 0.4s ease, color 0.3s ease;
+    }
 
-    <title>Selim Emir Can</title>
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-hover); }
 
-    <meta name="author" content="Selim Emir Can, Selim, Emir, Can">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css">
-    
-  </head>
+    /* ===== Nav ===== */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--nav-h);
+      background: var(--nav-bg);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
+      height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .nav-logo {
+      font-family: var(--font-serif); font-weight: 600; font-size: 18px;
+      color: var(--text); letter-spacing: -0.02em; white-space: nowrap;
+    }
+    .nav-logo:hover { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-links a {
+      font-size: 13.5px; font-weight: 500; color: var(--text-muted);
+      letter-spacing: 0.01em; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    #theme-toggle {
+      background: none; border: 1px solid var(--border);
+      border-radius: 50%; width: 34px; height: 34px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      color: var(--text-muted); transition: all 0.2s;
+    }
+    #theme-toggle svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .icon-moon { display: none; }
+    [data-theme="dark"] .icon-sun { display: none; }
+    [data-theme="dark"] .icon-moon { display: block; }
 
-  <body>
-    <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-      <tr style="padding:0px">
-        <td style="padding:0px">
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            <tr style="padding:0px">
-              <td style="padding:2.5%;width:63%;vertical-align:middle">
+    /* ===== Hero ===== */
+    .hero {
+      max-width: var(--max-w); margin: 0 auto;
+      scroll-margin-top: var(--nav-h);
+      padding: 72px 24px 56px;
+    }
+    .hero-inner { display: flex; align-items: center; gap: 56px; }
+    .hero-text { flex: 1; }
+    .hero-text h1 {
+      font-family: var(--font-serif);
+      font-size: 46px; font-weight: 700; line-height: 1.15;
+      color: var(--text); letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .hero-text .bio {
+      color: var(--text-secondary); font-size: 15px; line-height: 1.8; margin-bottom: 28px;
+    }
+    .hero-text .bio p + p { margin-top: 14px; }
+    .hero-text .bio a {
+      color: var(--accent);
+      font-weight: 500;
+      text-decoration: underline;
+      text-decoration-color: var(--accent-soft);
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1.5px;
+      transition: text-decoration-color 0.2s, color 0.2s;
+    }
+    .hero-text .bio a:hover { text-decoration-color: var(--accent); }
+    .social-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .social-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid var(--border); border-radius: 100px;
+      font-family: var(--font-mono); font-size: 12.5px; font-weight: 500;
+      color: var(--text-muted); transition: all 0.25s;
+    }
+    .social-link svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+    .social-link:hover {
+      color: var(--accent); border-color: var(--accent);
+      background: var(--accent-bg); transform: translateY(-1px);
+    }
 
-                <p class="name" style="text-align: center;">
-                  Selim Emir Can
-                </p>
+    .hero-photo {
+      flex-shrink: 0; width: 240px; height: 240px;
+      border-radius: var(--radius); overflow: hidden;
+      border: 3px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .hero-photo:hover { border-color: var(--accent-soft); box-shadow: var(--shadow-hover); }
+    .hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-                <p>
-                  I am a second-year masters student in the Electrical Engineering Department at Stanford University. I am currently working
-                  at the <a href="https://psai.stanford.edu/" target="_blank">Stanford Physical and Spatial Intelligence Lab</a> under
-                    Professor <a href="https://web.stanford.edu/~gordonwz/" target="_blank">Gordon Wetzstein</a>.
-                </p>
-                
-                <p>
-                  Previously, I completed my undergraduate studies in Electrical Engineering at the University of California, Los Angeles,
-                  where I worked with the <a href="https://visual.ee.ucla.edu/" target="_blank">Visual Machines Group</a>
-                   (VMG) under Professor <a href="https://www.ee.ucla.edu/achuta-kadambi/" target="_blank">Achuta Kadambi</a>
-                    and conducted microscopy research under Professor <a href="https://www.ee.ucla.edu/aydogan-ozcan/" target="_blank">Aydogan Ozcan</a>.
-                </p>
-                <p>
-                  My research interests lie at the intersection of computer vision, imaging, and artificial intelligence.
-                  I am broadly interested in applications such as AI-assisted healthcare, robotics, remote sensing, and AR/VR technology.
-                </p>
-                <p>
-                  More recently, I am interested in evaluating the spatial and physical reasoning capabilities of foundation models.
-                  I am also excited to explore multimodal ML representations in distributed, multisensory agent settings.
-                </p>
-                
-                <!-- <p>
-                  I'm interested in computer vision, generative AI, and VR/AR technologies. Most of my research is about improving eye tracking through equitable algorithms and improving compositionality of diffusion models. <span class="highlight">highlighted</span>.
-                </p> -->
-                <!-- In the future, I would like to shift my research focus more towards the co-design of
-                  optical systems and computational algorithms within the context of virtual/augmented reality. -->
-                <p style="text-align:center">
-                  <a href="https://scholar.google.com/citations?user=TEpkQU4AAAAJ&hl=en&oi=sra" target="_blank">Scholar</a> &nbsp;/&nbsp;
-                  <a href="mailto:selimcan@stanford.edu" target="_blank">Email</a> &nbsp;/&nbsp;
-                  <a href="data/SelimEmirCanCV.pdf" target="_blank">CV (Dec 2025)</a> &nbsp;/&nbsp;
-                  <!-- <a href="data/JonBarron-bio.txt">Bio</a> &nbsp;/&nbsp; -->
-                  <!-- <a href="https://scholar.google.com/citations?hl=en&user=jktWnL8AAAAJ">Scholar</a> &nbsp;/&nbsp; -->
-				  <!-- <a href="https://www.threads.net/@jonbarron">Threads</a> &nbsp;/&nbsp; -->
-				  <!-- <a href="https://bsky.app/profile/jonbarron.bsky.social">Bluesky</a> &nbsp;/&nbsp; -->
-                  <a href="https://github.com/selim-emir-can" target="_blank">Github</a> &nbsp;/&nbsp;
-                  <a href="https://www.linkedin.com/in/selim-emir-can/" target="_blank">LinkedIn</a> &nbsp;/&nbsp;
-                  <a href="https://twitter.com/selim_e_can" target="_blank">Twitter</a>
-                </p>
-              </td>
-              <td style="padding:2.5%;width:40%;max-width:40%">
-                <a href="images/SelimEmirCan.jpg"><img style="width:100%;max-width:100%;object-fit: cover; border-radius: 50%;" alt=" Selim Emir Can's profile photo" src="images/SelimEmirCan.jpg" class="hoverZoomLink"></a>
-              </td>
-            </tr>
+    /* ===== Sections ===== */
+    .section {
+      max-width: var(--max-w); margin: 0 auto; padding: 48px 24px;
+      scroll-margin-top: calc(var(--nav-h) + 16px);
+    }
+    .section-title {
+      font-family: var(--font-serif); font-size: 26px; font-weight: 600;
+      margin-bottom: 32px; display: flex; align-items: center; gap: 10px;
+      letter-spacing: -0.01em;
+    }
+    .divider { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .divider hr { border: none; height: 1px; background: var(--border); }
 
-            <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody></tbody>
-              <tr>
-              <td style="padding:20px;width:100%;vertical-align:middle">
-                <h2>News</h2>
-              </td>
-            </tr>
-          </tbody></table>
+    /* ===== News ===== */
+    .news-list {
+      display: flex; flex-direction: column;
+      max-height: 320px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 6px 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .news-list::-webkit-scrollbar { width: 5px; }
+    .news-list::-webkit-scrollbar-track { background: transparent; }
+    .news-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .news-list::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    .news-item {
+      display: flex; align-items: baseline; gap: 20px;
+      padding: 10px 14px; border-radius: var(--radius-sm); transition: background 0.2s;
+    }
+    .news-item:hover { background: rgba(0,0,0,0.015); }
+    [data-theme="dark"] .news-item:hover { background: rgba(255,255,255,0.02); }
+    .news-date {
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--text-muted);
+      white-space: nowrap; min-width: 64px;
+    }
+    .news-text { color: var(--text-secondary); font-size: 14.5px; line-height: 1.65; }
+    .news-text a {
+      text-decoration: underline; text-decoration-color: var(--accent-soft);
+      text-underline-offset: 2px; text-decoration-thickness: 1px;
+    }
+    .news-text a:hover { text-decoration-color: var(--accent); }
 
-            <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-              <tr>
-                <td style="padding:20px;width:100%;vertical-align:middle">     
-                <ul>
-                  <b>September 12th, 2026:</b> Concluded my summer internship at Apple.
-                </ul>
+    /* ===== Cards ===== */
+    .pub-list { display: flex; flex-direction: column; gap: 14px; }
+    .pub-card {
+      display: flex; gap: 22px; padding: 22px;
+      border-radius: var(--radius); border: 1px solid var(--border);
+      background: var(--bg-card); transition: all 0.3s ease;
+    }
+    .pub-card:hover {
+      border-color: var(--border-hover); background: var(--bg-card-hover);
+      transform: translateY(-2px); box-shadow: var(--shadow-hover);
+    }
+    .pub-image {
+      width: 220px; min-width: 220px; height: 150px;
+      border-radius: var(--radius-sm); overflow: hidden;
+      background: #fff; padding: 6px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pub-image img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .pub-image.logo { background: var(--bg-logo); padding: 14px; }
+    .pub-info { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .pub-title {
+      font-weight: 600; font-size: 15px; line-height: 1.5;
+      color: var(--text); transition: color 0.2s;
+    }
+    a.pub-title:hover { color: var(--accent); }
+    .pub-authors { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .pub-authors a { color: inherit; }
+    .pub-authors a:hover { color: var(--accent); }
+    .pub-authors strong { color: var(--text); font-weight: 600; }
+    .pub-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
+    .pub-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+    .venue-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 100px;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.02em;
+    }
+    .pub-link {
+      font-family: var(--font-mono); font-size: 11.5px; font-weight: 500;
+      color: var(--text-muted); padding: 2px 8px; border-radius: 6px;
+      border: 1px solid var(--border); transition: all 0.2s;
+    }
+    .pub-link:hover { color: var(--accent); border-color: var(--accent); }
+    .venue-arxiv    { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .venue-preprint { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+    .venue-notes    { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .venue-work     { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+    .venue-edu      { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
 
-                <ul>
-                  <b>January 15th, 2026:</b> Released the website, and arXiV manuscript for <i>Image2Garment</i>.
-                </ul> 
+    [data-theme="dark"] .venue-arxiv    { background: rgba(185,28,28,0.12); color: #fca5a5; border-color: rgba(185,28,28,0.3); }
+    [data-theme="dark"] .venue-preprint { background: rgba(100,116,139,0.1); color: #94a3b8; border-color: rgba(100,116,139,0.2); }
+    [data-theme="dark"] .venue-notes    { background: rgba(217,119,6,0.1); color: #fcd34d; border-color: rgba(217,119,6,0.25); }
+    [data-theme="dark"] .venue-work     { background: rgba(124,58,237,0.1); color: #c4b5fd; border-color: rgba(124,58,237,0.25); }
+    [data-theme="dark"] .venue-edu      { background: rgba(37,99,235,0.1); color: #93c5fd; border-color: rgba(37,99,235,0.25); }
 
-                <ul>
-                  <b>December 5th, 2025:</b> Presented <i>Image2Garment: Simulation-ready Garments from a Single Image</i> at the
-                  <br> <a href="https://scien.stanford.edu/index.php/2025-scien-affiliates-meeting-poster-presentations/#Emir" target="_blank">Stanford Center for Image Systems Engineering (SCIEN) Industry Affiliates Meeting</a>.
-                </ul> 
-                
-                <ul>
-                  <b>September 5th, 2025:</b> Started my masters in electrical engineering at Stanford University.
-                </ul>  
+    /* ===== Footer ===== */
+    footer {
+      max-width: var(--max-w); margin: 0 auto;
+      padding: 40px 24px 80px; text-align: center;
+    }
+    footer p { font-size: 13px; color: var(--text-muted); }
 
-                <ul>
-                  <b>February 8th, 2025:</b> Presented <i>Thermal Imaging and Radar for Remote Sleep Monitoring of Breathing and Apnea</i> at the <br>
-                  <a href="https://www.uclahealth.org/medical-services/sleep-medicine/research-education/education/frisca-l-yan-go-md-lectureship-sleep-medicine" target="_blank">8th Annual UCLA Sleep Medicine Day, Frisca Yan-Go Lectureship</a>
-                </ul>  
-                <ul>
-                  <b>July 5th, 2024:</b> Our paper has been <a href="https://arxiv.org/abs/2407.11936" target="_blank">arXived</a>.
-                </ul>           
-                <ul>
-                  <b>June 16th, 2024:</b> Graduated from UCLA with Latin Honors!
-                </ul>  
-                <ul>
-                  <b>May 29th, 2024:</b> Filed my first patent titled "Methods and Apparatus to Detect and Classify Forms of Sleep Apnea" (UCLA Case no. 2024-253-1)
-                </ul>  
-              </td>
-            </tr>
-            </tbody></table>
+    /* ===== Scroll Animations ===== */
+    .js .anim {
+      opacity: 0; transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .js .anim.visible { opacity: 1; transform: translateY(0); }
 
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-              <tr>
-              <td style="padding:20px;width:100%;vertical-align:middle">
-                <h2>Research</h2>
-                <!-- <p> 
-                  My current research focuses on <b>accurate physics modeling</b> in the context of simulation ready garments. Previously, I worked on improving neural networks through <b>uncertainty quantification</b> and <b>virtual staining</b> of unlabeled tissue images via deep learning.
-                </p> -->
-              </td>
-            </tr>
-          </tbody></table>
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            
-            
-            <tr onmouseout="smerf_stop()" onmouseover="smerf_start()">
-              <td style="padding:20px;width:25%;vertical-align:middle">
-                <div class="one">
-                  <!-- <div class="two" id='smerf_image'><video  width=100% muted autoplay loop>
-                  <source src="images/smerf.mp4" type="video/mp4">
-                  Your browser does not support the video tag.
-                  </video></div> -->
-                
-                  <a href="https://arxiv.org/pdf/2601.09658" target="_blank"><img src='images\teaser.png' alt="Image2Garment teaser" width=100%></a>
-                </div>
-                <script type="text/javascript">
-                  function smerf_start() {
-                    document.getElementById('smerf_image').style.opacity = "1";
-                  }
-        
-                  function smerf_stop() {
-                    document.getElementById('smerf_image').style.opacity = "0";
-                  }
-                  smerf_stop()
-                </script>
-              <td style="padding:20px;width:75%;vertical-align:middle">
-                <a href="https://arxiv.org/abs/2601.09658" target="_blank"><span class="papertitle">Image2Garment: Simulation-ready Garment Generation from a Single Image
-</span></a>
-                <br>
-                <strong>Selim Emir Can*</strong>,
-                <a href="https://janackermann.info/" target="_blank">Jan Ackermann*</a>,
-                <a href="https://georgenakayama.github.io/" target="_blank">Kiyohiro Nakayama</a>,
-                <a href="https://ruofanliu0129.github.io/Resume/" target="_blank">Ruofan Liu</a>,
-                <a href="https://wutong16.github.io/" target="_blank">Tong Wu</a>,
-                <a href="https://y-zheng18.github.io/" target="_blank">Yang Zheng</a>,
-                <a href="https://hbertiche.github.io/" target="_blank">Hugo Bertiche</a>,
-                <a href="https://mlchai.com/" target="_blank">Menglei Chai</a>,
-                <a href="https://thabobeeler.com/" target="_blank">Thabo Beeler</a>,
-                <a href="https://stanford.edu/~gordonwz/" target="_blank">Gordon Wetzstein</a>
-                <br>
-                <br>
-                <br>
-                <em>arXiv</em>, 2026 (Under Review)
-                <br>
-                <a href="https://arxiv.org/abs/2601.09658" target="_blank">Paper</a>
-                /
-                <a href="https://image2garment.github.io/" target="_blank">Website</a>
-                /
-                <a href="https://github.com/Selim-Emir-Can/Image2Garment" target="_blank">Code</a>
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .hero { padding: 44px 16px 36px; }
+      .hero-inner { flex-direction: column-reverse; gap: 32px; text-align: center; }
+      .hero-text h1 { font-size: 34px; }
+      .hero-photo { width: 190px; height: 190px; }
+      .social-links { justify-content: center; }
+      .section { padding: 32px 16px; }
+      .divider { padding: 0 16px; }
+      .nav-inner { padding: 0 16px; }
+      .section-title { font-size: 22px; margin-bottom: 24px; }
+      .pub-card { flex-direction: column; gap: 14px; padding: 16px; }
+      .pub-image { width: 100%; min-width: unset; height: 220px; }
+      .pub-image.logo { height: 110px; }
+      .news-item { flex-direction: column; gap: 2px; padding: 8px 10px; }
+      .news-date { min-width: unset; }
+      .nav-links { gap: 14px; }
+      .nav-links a { font-size: 13px; }
+    }
+    @media (max-width: 560px) {
+      .nav-links a.optional { display: none; }
+    }
+    @media (max-width: 420px) {
+      .nav-links a.nav-about { display: none; }
+    }
+    @media (max-width: 480px) {
+      .hero-text h1 { font-size: 28px; }
+      .hero-photo { width: 160px; height: 160px; }
+      .social-link { padding: 6px 11px; font-size: 11.5px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .js .anim { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
 
-                <p></p>
-                <!-- <p>
-                  Under Review
-                </p> -->
-              </td>
-              </td>
-            </tr>
-            
-            <tr onmouseout="smerf_stop()" onmouseover="smerf_start()">
-              <td style="padding:20px;width:25%;vertical-align:middle">
-                <div class="one">
-                  <!-- <div class="two" id='smerf_image'><video  width=100% muted autoplay loop>
-                  <source src="images/smerf.mp4" type="video/mp4">
-                  Your browser does not support the video tag.
-                  </video></div> -->
-                  <a href="https://selim-emir-can.github.io/" target="_blank"><img src='images\MonoUncDepthFigure.png' alt="Uncertainty-Aware Models for Fast Video Depth Estimation" width=100%></a>
-                </div>
-                <script type="text/javascript">
-                  function smerf_start() {
-                    document.getElementById('smerf_image').style.opacity = "1";
-                  }
-        
-                  function smerf_stop() {
-                    document.getElementById('smerf_image').style.opacity = "0";
-                  }
-                  smerf_stop()
-                </script>
-              <td style="padding:20px;width:75%;vertical-align:middle">
-                <a href="https://selim-emir-can.github.io/" target="_blank"><span class="papertitle">Monocular Depth Meets Uncertainty: Towards Stable and Accurate Video Depth
-                  Estimation</span></a>
-                <br>
-                <a href="https://pradyumnachari.github.io/" target="_blank">Pradyumna Chari</a>,
-                <strong>Selim Emir Can</strong>,
-                <a href="https://asvilesov.github.io/" target="_blank">Alexander Vilesov</a>,
-                <a href="https://hgchen.com/" target="_blank">Huaijin Chen</a>,
-                <a href="https://nitishsrivastava.github.io/" target="_blank">Nitish Srivastava</a>,
-                <a href="https://www.ee.ucla.edu/achuta-kadambi/" target="_blank">Achuta Kadambi</a>
-                <br>
-                <br>
-                <br>
-                <em>Pre-print</em>, 2025 (available upon request)<!-- <em>arXiv</em>, 2024 -->
-                <br>
-                <!-- <a href="https://selim-emir-can.github.io/" target="_blank">Paper</a>
-                /
-                <a href="https://selim-emir-can.github.io/" target="_blank">Website</a>
-                /
-                <a href="https://selim-emir-can.github.io/" target="_blank">Code</a> (All Coming Soon!) -->
-                
-                <!-- <p>
-                  Under Review
-                </p> -->
-              </td>
-              </td>
-            </tr>
-      
-      
-      <tr onmouseout="smerf_stop()" onmouseover="smerf_start()">
-        <td style="padding:20px;width:25%;vertical-align:middle">
-          <div class="one">
-            <!-- <div class="two" id='smerf_image'><video  width=100% muted autoplay loop>
-            <source src="images/smerf.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-            </video></div> -->
-            <a href="https://arxiv.org/pdf/2407.11936" target="_blank"><img src='images\OSA_snapshot.png' alt="OSA figure" width=100%></a>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Selim Emir Can</a>
+      <div class="nav-links">
+        <a href="#about" class="nav-about">About</a>
+        <a href="#news">News</a>
+        <a href="#research">Research</a>
+        <a href="#experience" class="optional">Experience</a>
+        <a href="#education" class="optional">Education</a>
+        <button id="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section id="about" class="hero">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <h1>Selim Emir Can</h1>
+          <div class="bio">
+            <p>
+              I am a second-year master's student in the Electrical Engineering Department at Stanford University, working at the
+              <a href="https://psai.stanford.edu/" target="_blank" rel="noopener">Stanford Physical and Spatial Intelligence Lab</a> under
+              Professor <a href="https://web.stanford.edu/~gordonwz/" target="_blank" rel="noopener">Gordon Wetzstein</a>.
+            </p>
+            <p>
+              Previously, I completed my undergraduate studies in Electrical Engineering at UCLA, where I worked with the
+              <a href="https://visual.ee.ucla.edu/" target="_blank" rel="noopener">Visual Machines Group</a> under Professor
+              <a href="https://www.ee.ucla.edu/achuta-kadambi/" target="_blank" rel="noopener">Achuta Kadambi</a> and conducted microscopy research under Professor
+              <a href="https://www.ee.ucla.edu/aydogan-ozcan/" target="_blank" rel="noopener">Aydogan Ozcan</a>.
+            </p>
+            <p>
+              My research interests lie at the intersection of computer vision, imaging, and artificial intelligence, with applications in
+              AI-assisted healthcare, robotics, remote sensing, and AR/VR. More recently, I am interested in evaluating the spatial and physical
+              reasoning capabilities of foundation models, and in multimodal ML representations for distributed, multisensory agents.
+            </p>
           </div>
-          <script type="text/javascript">
-            function smerf_start() {
-              document.getElementById('smerf_image').style.opacity = "1";
-            }
-  
-            function smerf_stop() {
-              document.getElementById('smerf_image').style.opacity = "0";
-            }
-            smerf_stop()
-          </script>
-        <td style="padding:20px;width:75%;vertical-align:middle">
-          <a href="https://arxiv.org/abs/2407.11936" target="_blank"><span class="papertitle">Thermal Imaging and Radar for Remote Sleep
-            Monitoring of Breathing and Apnea</span></a>
-          <br>
-          <a href="https://www.linkedin.com/in/kai-del-regno-103269222/" target="_blank">Kai Del Regno</a>,
-          <a href="https://asvilesov.github.io/" target="_blank">Alexander Vilesov</a>,
-          <a href="https://adnan-armouti.github.io/" target="_blank">Adnan Armouti</a>,
-          <a href="https://anirudh0707.github.io/" target="_blank">Anirudh Bindiganavale Harish</a>,
-      <strong>Selim Emir Can</strong>,
-          <a href="https://www.uclahealth.org/providers/ashley-kita" target="_blank">Ashley E. Kita</a>,
-          <a href="https://www.ee.ucla.edu/achuta-kadambi/" target="_blank">Achuta Kadambi</a>
-          <br>
-          <br>
-          <br>
-          <em>arXiv</em>, 2024
-          <br>
-          <a href="https://arxiv.org/abs/2407.11936" target="_blank">Paper</a>
-          /
-          <a href="https://github.com/UCLA-VMG/NonContactApneaDetection" target="_blank">Code</a>
-          <p></p>
-          <!-- <p>
-            Under Review
-          </p> -->
-        </td>
-        </td>
-      </tr>
-
-
-          </tbody></table>
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            <tr>
-            <td style="padding:20px;width:100%;vertical-align:middle">
-              <h2>Class Notes</h2>
-            </td>
-          </tr>
-        </tbody></table>
-        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-        
-      <tr onmouseout="smerf_stop()" onmouseover="smerf_start()"  bgcolor="#ffffd0">
-        <td style="padding:20px;width:25%;vertical-align:middle">
-          <div class="one">
-            <!-- <div class="two" id='smerf_image'><video  width=100% muted autoplay loop>
-            <source src="images/smerf.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-            </video></div> -->
-            <a href="data/DSPNotes.pdf" target="_blank"><img src='images/latex.png' alt="digital signal processing notes photo" width=100%></a>
+          <div class="social-links">
+            <a class="social-link" href="https://scholar.google.com/citations?user=TEpkQU4AAAAJ&hl=en&oi=sra" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg>
+              Scholar
+            </a>
+            <a class="social-link" href="data/SelimEmirCanCV.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM8 13h8v2H8v-2zm0 4h8v2H8v-2z"/></svg>
+              CV
+            </a>
+            <a class="social-link" href="https://github.com/selim-emir-can" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+              GitHub
+            </a>
+            <a class="social-link" href="https://www.linkedin.com/in/selim-emir-can/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </a>
+            <a class="social-link" href="https://twitter.com/selim_e_can" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Twitter
+            </a>
+            <a class="social-link" href="mailto:selimcan@stanford.edu">
+              <svg viewBox="0 0 24 24"><path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67z"/><path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908z"/></svg>
+              Email
+            </a>
           </div>
-          <script type="text/javascript">
-            function smerf_start() {
-              document.getElementById('smerf_image').style.opacity = "1";
-            }
-
-            function smerf_stop() {
-              document.getElementById('smerf_image').style.opacity = "0";
-            }
-            smerf_stop()
-          </script>
-  </div>
-
-      Supplementary notes for EC ENGR 113 at UCLA.
-          </p>
-        </td>
-      </tr>
-    <!-- <tr onmouseout="nuvo_stop()" onmouseover="nuvo_start()">
-      <td style="padding:20px;width:25%;vertical-align:middle">
-        <div class="one">
-          <div class="two" id='nuvo_image'><video  width=100% muted autoplay loop>
-          <source src="images/nuvo.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-          </video></div>
-          <img src='images/nuvo.jpg' width=100%>
         </div>
-        <script type="text/javascript">
-          function nuvo_start() {
-            document.getElementById('nuvo_image').style.opacity = "1";
-          }
-
-          function nuvo_stop() {
-            document.getElementById('nuvo_image').style.opacity = "0";
-          }
-          nuvo_stop()
-        </script>
-      </td>
-      <td style="padding:20px;width:75%;vertical-align:middle">
-        <a href="https://pratulsrinivasan.github.io/nuvo/">
-          <span class="papertitle">Nuvo: Neural UV Mapping for Unruly 3D Representations</span>
-        </a>
-        <br>
-        <a href="https://pratulsrinivasan.github.io/">Pratul Srinivasan</a>,
-        <a href="http://stephangarbin.com/">Stephan J. Garbin</a>,
-        <a href="https://dorverbin.github.io/">Dor Verbin</a>,
-		<strong>Jonathan T. Barron</strong>,
-        <a href="https://bmild.github.io/">Ben Mildenhall</a>
-        <br>
-        <em>arXiv</em>, 2023
-        <br>
-        <a href="https://pratulsrinivasan.github.io/nuvo/">project page</a>
-        /
-        <a href="https://www.youtube.com/watch?v=hmJiOSTDQZI">video</a>
-        /
-        <a href="http://arxiv.org/abs/2312.05283">arXiv</a>
-        <p></p>
-        <p>
-        Neural fields let you recover editable UV mappings for the challenging geometries produced by NeRF-like models.
-        </p>
-      </td>
-    </tr>
-	
-	
-    <tr onmouseout="recon_stop()" onmouseover="recon_start()" bgcolor="#ffffd0">
-      <td style="padding:20px;width:25%;vertical-align:middle">
-        <div class="one">
-          <div class="two" id='recon_image'><video  width=100% height=100% muted autoplay loop>
-          <source src="images/recon.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-          </video></div>
-          <img src='images/recon.png' width="160">
+        <div class="hero-photo">
+          <img src="images/SelimEmirCan.jpg" alt="Selim Emir Can">
         </div>
-        <script type="text/javascript">
-          function recon_start() {
-            document.getElementById('recon_image').style.opacity = "1";
-          }
+      </div>
+    </section>
 
-          function recon_stop() {
-            document.getElementById('recon_image').style.opacity = "0";
-          }
-          recon_stop()
-        </script>
-      </td>
-      <td style="padding:20px;width:75%;vertical-align:middle">
-        <a href="https://reconfusion.github.io/">
-			<span class="papertitle">ReconFusion: 3D Reconstruction with Diffusion Priors</span>
-        </a>
-        <br>
-        <a href="https://www.cs.columbia.edu/~rundi/">Rundi Wu*</a>,
-		<a href="https://bmild.github.io/">Ben Mildenhall*</a>,
-        <a href="https://henzler.github.io/">Philipp Henzler</a>,
-        <a href="https://keunhong.com/">Keunhong Park</a>,
-        <a href="https://ruiqigao.github.io/">Ruiqi Gao</a>,
-        <a href="https://scholar.google.com/citations?user=_pKKv2QAAAAJ&hl=en/">Daniel Watson</a>,
-        <a href="https://pratulsrinivasan.github.io/">Pratul P. Srinivasan</a>,
-        <a href="https://dorverbin.github.io/">Dor Verbin</a>,
-		<strong>Jonathan T. Barron</strong>,
-        <a href="https://poolio.github.io/">Ben Poole</a>,
-        <a href="https://holynski.org/">Aleksander Holynski*</a>
-        <br>
-        <em>arXiv</em>, 2023
-        <br>
-        <a href="https://reconfusion.github.io/">project page</a>
-        /
-        <a href="https://arxiv.org/abs/">arXiv</a>
-        <p></p>
-        <p>
-        Using a multi-image diffusion model as a regularizer lets you recover high-quality radiance fields from just a handful of images.
-        </p>
-      </td>
-    </tr> -->
+    <div class="divider"><hr></div>
 
-          </tbody></table>
+    <section id="news" class="section">
+      <h2 class="section-title">News</h2>
+      <div class="news-list">
+        <div class="news-item"><span class="news-date">2026.09</span><span class="news-text">Concluded my summer internship at Apple.</span></div>
+        <div class="news-item"><span class="news-date">2026.01</span><span class="news-text">Released the <a href="https://image2garment.github.io/" target="_blank" rel="noopener">website</a> and <a href="https://arxiv.org/abs/2601.09658" target="_blank" rel="noopener">arXiv manuscript</a> for <i>Image2Garment</i>.</span></div>
+        <div class="news-item"><span class="news-date">2025.12</span><span class="news-text">Presented <i>Image2Garment: Simulation-ready Garments from a Single Image</i> at the <a href="https://scien.stanford.edu/index.php/2025-scien-affiliates-meeting-poster-presentations/#Emir" target="_blank" rel="noopener">Stanford Center for Image Systems Engineering (SCIEN) Industry Affiliates Meeting</a>.</span></div>
+        <div class="news-item"><span class="news-date">2025.09</span><span class="news-text">Started my master's in Electrical Engineering at Stanford University.</span></div>
+        <div class="news-item"><span class="news-date">2025.02</span><span class="news-text">Presented <i>Thermal Imaging and Radar for Remote Sleep Monitoring of Breathing and Apnea</i> at the <a href="https://www.uclahealth.org/medical-services/sleep-medicine/research-education/education/frisca-l-yan-go-md-lectureship-sleep-medicine" target="_blank" rel="noopener">8th Annual UCLA Sleep Medicine Day, Frisca Yan-Go Lectureship</a>.</span></div>
+        <div class="news-item"><span class="news-date">2024.07</span><span class="news-text">Our paper has been <a href="https://arxiv.org/abs/2407.11936" target="_blank" rel="noopener">arXived</a>.</span></div>
+        <div class="news-item"><span class="news-date">2024.06</span><span class="news-text">Graduated from UCLA with Latin Honors!</span></div>
+        <div class="news-item"><span class="news-date">2024.05</span><span class="news-text">Filed my first patent, "Methods and Apparatus to Detect and Classify Forms of Sleep Apnea" (UCLA Case no. 2024-253-1).</span></div>
+      </div>
+    </section>
 
-          
-          <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20"><tbody>
-            <tr>
-              <td>
-                <h2>Work Experience</h2>
-              </td>
-            </tr>
-          </tbody></table>
-          <table width="100%" align="center" border="0" cellpadding="20"><tbody>
-            <tr>
-              <td style="padding:20px;width:25%;vertical-align:middle;text-align:center"><img src="images/apple-big-logo_80676.png" alt="Apple logo" width="80"></td>
-              <td style="padding:20px;width:75%;vertical-align:middle">
-                <b>AI/ML Research Intern, Camera ML Team</b><br>
-                Apple &mdash; Summer 2026
-              </td>
-            </tr>
-          </tbody></table>
+    <div class="divider"><hr></div>
 
-          <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20"><tbody>
-            <tr>
-              <td>
-                <h2>Education</h2>
-              </td>
-            </tr>
-          </tbody></table>
-          <table width="100%" align="center" border="0" cellpadding="20"><tbody>
-            <tr>
-              <td style="padding:20px;width:25%;vertical-align:middle"><img src="images/stanford-university-logo.png" alt="Stanford logo" width="160"></td>
-              <td width="75%" valign="center">
-                Master of Science in Electrical Engineering (2025-Present)
-              </td>
-            </tr>
+    <section id="research" class="section">
+      <h2 class="section-title">Research</h2>
+      <div class="pub-list">
 
-            <tr>
-              <td style="padding:20px;width:25%;vertical-align:middle"><img src="images/logo_UCLA_blue_boxed.png" alt="UCLA logo" width="160"></td>
-              <td width="75%" valign="center">
-                Bachelor of Science in Electrical Engineering (2020-2024)
-              </td>
-            </tr>
+        <div class="pub-card anim">
+          <a class="pub-image" href="https://arxiv.org/abs/2601.09658" target="_blank" rel="noopener"><img src="images/thumbs/teaser.jpg" alt="Image2Garment teaser" loading="lazy"></a>
+          <div class="pub-info">
+            <a href="https://arxiv.org/abs/2601.09658" class="pub-title" target="_blank" rel="noopener">Image2Garment: Simulation-ready Garment Generation from a Single Image</a>
+            <p class="pub-authors">
+              <strong>Selim Emir Can*</strong>,
+              <a href="https://janackermann.info/" target="_blank" rel="noopener">Jan Ackermann*</a>,
+              <a href="https://georgenakayama.github.io/" target="_blank" rel="noopener">Kiyohiro Nakayama</a>,
+              <a href="https://ruofanliu0129.github.io/Resume/" target="_blank" rel="noopener">Ruofan Liu</a>,
+              <a href="https://wutong16.github.io/" target="_blank" rel="noopener">Tong Wu</a>,
+              <a href="https://y-zheng18.github.io/" target="_blank" rel="noopener">Yang Zheng</a>,
+              <a href="https://hbertiche.github.io/" target="_blank" rel="noopener">Hugo Bertiche</a>,
+              <a href="https://mlchai.com/" target="_blank" rel="noopener">Menglei Chai</a>,
+              <a href="https://thabobeeler.com/" target="_blank" rel="noopener">Thabo Beeler</a>,
+              <a href="https://stanford.edu/~gordonwz/" target="_blank" rel="noopener">Gordon Wetzstein</a>
+            </p>
+            <div class="pub-meta">
+              <span class="venue-badge venue-arxiv">arXiv 2026 · Under Review</span>
+              <a class="pub-link" href="https://arxiv.org/abs/2601.09658" target="_blank" rel="noopener">Paper</a>
+              <a class="pub-link" href="https://image2garment.github.io/" target="_blank" rel="noopener">Website</a>
+              <a class="pub-link" href="https://github.com/Selim-Emir-Can/Image2Garment" target="_blank" rel="noopener">Code</a>
+            </div>
+          </div>
+        </div>
 
+        <div class="pub-card anim">
+          <div class="pub-image"><img src="images/thumbs/MonoUncDepthFigure.jpg" alt="Uncertainty-aware video depth estimation figure" loading="lazy"></div>
+          <div class="pub-info">
+            <span class="pub-title">Monocular Depth Meets Uncertainty: Towards Stable and Accurate Video Depth Estimation</span>
+            <p class="pub-authors">
+              <a href="https://pradyumnachari.github.io/" target="_blank" rel="noopener">Pradyumna Chari</a>,
+              <strong>Selim Emir Can</strong>,
+              <a href="https://asvilesov.github.io/" target="_blank" rel="noopener">Alexander Vilesov</a>,
+              <a href="https://hgchen.com/" target="_blank" rel="noopener">Huaijin Chen</a>,
+              <a href="https://nitishsrivastava.github.io/" target="_blank" rel="noopener">Nitish Srivastava</a>,
+              <a href="https://www.ee.ucla.edu/achuta-kadambi/" target="_blank" rel="noopener">Achuta Kadambi</a>
+            </p>
+            <div class="pub-meta">
+              <span class="venue-badge venue-preprint">Pre-print 2025 · Available upon request</span>
+            </div>
+          </div>
+        </div>
 
-          </tbody></table>
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            <tr>
-              <td style="padding:0px">
-                <br>
-              </td>
-            </tr>
-          </tbody></table>
-        </td>
-      </tr>
-    </table>
-    <footer style="max-width:760px;margin:24px auto;padding:16px 20px;border-top:1px solid #e2e7ec;text-align:center;">
-      <p>Contact me at <a href="mailto:selimcan@stanford.edu">selimcan@stanford.edu</a>.</p>
-    </footer>
-  </body>
+        <div class="pub-card anim">
+          <a class="pub-image" href="https://arxiv.org/abs/2407.11936" target="_blank" rel="noopener"><img src="images/thumbs/OSA_snapshot.jpg" alt="Sleep apnea monitoring figure" loading="lazy"></a>
+          <div class="pub-info">
+            <a href="https://arxiv.org/abs/2407.11936" class="pub-title" target="_blank" rel="noopener">Thermal Imaging and Radar for Remote Sleep Monitoring of Breathing and Apnea</a>
+            <p class="pub-authors">
+              <a href="https://www.linkedin.com/in/kai-del-regno-103269222/" target="_blank" rel="noopener">Kai Del Regno</a>,
+              <a href="https://asvilesov.github.io/" target="_blank" rel="noopener">Alexander Vilesov</a>,
+              <a href="https://adnan-armouti.github.io/" target="_blank" rel="noopener">Adnan Armouti</a>,
+              <a href="https://anirudh0707.github.io/" target="_blank" rel="noopener">Anirudh Bindiganavale Harish</a>,
+              <strong>Selim Emir Can</strong>,
+              <a href="https://www.uclahealth.org/providers/ashley-kita" target="_blank" rel="noopener">Ashley E. Kita</a>,
+              <a href="https://www.ee.ucla.edu/achuta-kadambi/" target="_blank" rel="noopener">Achuta Kadambi</a>
+            </p>
+            <div class="pub-meta">
+              <span class="venue-badge venue-arxiv">arXiv 2024</span>
+              <a class="pub-link" href="https://arxiv.org/abs/2407.11936" target="_blank" rel="noopener">Paper</a>
+              <a class="pub-link" href="https://github.com/UCLA-VMG/NonContactApneaDetection" target="_blank" rel="noopener">Code</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="divider"><hr></div>
+
+    <section id="notes" class="section">
+      <h2 class="section-title">Class Notes</h2>
+      <div class="pub-list">
+        <div class="pub-card anim">
+          <a class="pub-image" href="data/DSPNotes.pdf" target="_blank" rel="noopener"><img src="images/thumbs/latex.jpg" alt="Digital signal processing notes" loading="lazy"></a>
+          <div class="pub-info">
+            <a href="data/DSPNotes.pdf" class="pub-title" target="_blank" rel="noopener">Digital Signal Processing Notes</a>
+            <p class="pub-desc">Supplementary notes for EC ENGR 113 at UCLA.</p>
+            <div class="pub-meta">
+              <span class="venue-badge venue-notes">UCLA EC ENGR 113</span>
+              <a class="pub-link" href="data/DSPNotes.pdf" target="_blank" rel="noopener">PDF</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"><hr></div>
+
+    <section id="experience" class="section">
+      <h2 class="section-title">Work Experience</h2>
+      <div class="pub-list">
+        <div class="pub-card anim">
+          <div class="pub-image logo"><img src="images/apple-big-logo_80676.png" alt="Apple logo" loading="lazy"></div>
+          <div class="pub-info">
+            <span class="pub-title">AI/ML Research Intern, Camera ML Team</span>
+            <p class="pub-desc">Apple</p>
+            <div class="pub-meta"><span class="venue-badge venue-work">Summer 2026</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"><hr></div>
+
+    <section id="education" class="section">
+      <h2 class="section-title">Education</h2>
+      <div class="pub-list">
+        <div class="pub-card anim">
+          <div class="pub-image logo"><img src="images/stanford-university-logo.png" alt="Stanford University logo" loading="lazy"></div>
+          <div class="pub-info">
+            <span class="pub-title">Master of Science in Electrical Engineering</span>
+            <p class="pub-desc">Stanford University</p>
+            <div class="pub-meta"><span class="venue-badge venue-edu">2025 – Present</span></div>
+          </div>
+        </div>
+        <div class="pub-card anim">
+          <div class="pub-image logo"><img src="images/logo_UCLA_blue_boxed.png" alt="UCLA logo" loading="lazy"></div>
+          <div class="pub-info">
+            <span class="pub-title">Bachelor of Science in Electrical Engineering</span>
+            <p class="pub-desc">University of California, Los Angeles · Latin Honors</p>
+            <div class="pub-meta"><span class="venue-badge venue-edu">2020 – 2024</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Contact me at <a href="mailto:selimcan@stanford.edu">selimcan@stanford.edu</a>.</p>
+  </footer>
+
+  <script>
+    /* ===== Theme ===== */
+    const html = document.documentElement;
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('theme', html.dataset.theme); } catch (e) {}
+    });
+
+    /* ===== Scroll anim (content stays visible if JS is off) ===== */
+    if ('IntersectionObserver' in window) {
+      html.classList.add('js');
+      const obs = new IntersectionObserver(es => {
+        es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+      }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+      document.querySelectorAll('.anim').forEach(e => obs.observe(e));
+    }
+  </script>
+</body>
 </html>
