@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ClariDi Spatial Splits</title>
+<link rel="stylesheet" href="assets/claridi.css">
+<style>
+  :root { --test: #D55E00; --val: #F0E442; --train: #0072B2; }
+  main { padding: 12px 16px 40px; max-width: 1700px; margin: 0 auto; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink2); align-items: center; margin: 4px 0 10px; }
+  .sw { display: inline-block; width: 13px; height: 13px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; border: 1px solid rgba(0,0,0,.4); }
+  .cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(var(--cw, 420px), 1fr)); }
+  .card { padding: 10px 12px 12px; min-width: 0; }
+  .card h3 { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: baseline; margin-bottom: 6px; }
+  .card h3 small { font-family: var(--sans); font-weight: 400; font-size: 12.5px; color: var(--mute); }
+  .maps { display: grid; gap: 8px; }
+  .map .cap { font-family: var(--serif); font-weight: 700; font-size: 15px; text-align: center; margin-bottom: 2px; }
+  .map .cnt { font-size: 11.5px; color: var(--mute); text-align: center; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  svg.mos { width: 100%; height: auto; display: block; background: #1c1c1f; border-radius: 5px; }
+  svg .t { stroke-width: 1; vector-effect: non-scaling-stroke; cursor: pointer; }
+  svg .t:hover { stroke: #fff !important; stroke-width: 2.5; }
+  svg .unit { fill: none; stroke: #fff; stroke-width: 1.8; vector-effect: non-scaling-stroke; pointer-events: none; }
+  #tip { position: fixed; z-index: 50; pointer-events: none; display: none; background: #fff; border: 1.5px solid var(--ink); border-radius: 8px; padding: 7px 10px; font-size: 12.5px; box-shadow: 0 6px 20px rgba(0,0,0,.18); max-width: 330px; }
+  #tip b.id { font-family: var(--mono); font-size: 12px; }
+  #tip .roles { display: flex; gap: 3px; margin-top: 4px; }
+  #tip .roles span { font-size: 11px; padding: 0 5px; border-radius: 3px; color: #111; }
+  #tip img { width: 96px; height: 96px; margin: 5px 4px 0 0; border-radius: 3px; }
+  table { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+  td, th { padding: 4px 12px; border-bottom: 1px solid var(--line); text-align: right; }
+  th { color: var(--mute); font-weight: 500; } td:first-child, th:first-child { text-align: left; }
+  .tw { overflow-x: auto; margin: 6px 0 14px; }
+  details summary { cursor: pointer; color: var(--navy); margin: 8px 0; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="in">
+    <a class="brand" href="index.html">ClariDi <small>spatial splits</small></a>
+    <span class="ctl">view <span class="seg" id="view"></span></span>
+    <span class="ctl">grid <span class="seg" id="scale"><button data-v="10x10">10&times;10</button><button data-v="5x5">5&times;5</button></span></span>
+    <span class="ctl">image <span class="seg" id="mod"><button data-v="csf">C&amp;SF</button><button data-v="ua">UA</button></span></span>
+    <label class="chip" id="cUnits"><input type="checkbox" id="units">spatial units</label>
+    <span class="ctl">fill <input type="range" id="op" min="0" max="90" value="45" style="width:90px"></span>
+    <span class="ctl">sample <select id="spec"><option value="">all</option></select></span>
+    <span class="spacer"></span>
+    <a href="tiles.html" class="small">tile viewer</a> <a href="wholesample.html" class="small">whole-sample viewer</a>
+  </div>
+</div>
+<main>
+  <div class="legend" id="legend"></div>
+  <div class="cards" id="cards"></div>
+  <details open><summary>Tile counts per fold</summary><div class="tw"><table id="tab"></table></div></details>
+  <div class="note small">
+    <b>How the split works.</b> Each sample's tiles are grouped into spatial units (a 5&times;5 crop together with the 10&times;10 crops inside it,
+    so the two grids never put overlapping pixels in different partitions). Units are ordered along the sample's long axis and cut into
+    5 bands. In fold <i>k</i>, band <i>k</i> is the <b>test</b> set, the neighbouring band (<i>k</i>+1; band 3 for fold 4) is <b>val</b>, and the other
+    three bands are <b>train</b>. Every sample appears in every partition, and every tile is tested exactly once across the 5 folds.
+    A test band can share a tile edge (no pixels) with a training band.
+    Hover a tile for its id, unit and role in every fold; click it to open it in the tile viewer. Hatched = no tile at this grid.
+    Keys: <kbd>0</kbd>&ndash;<kbd>4</kbd> fold, <kbd>a</kbd> all folds, <kbd>b</kbd> bands, <kbd>s</kbd> grid, <kbd>c</kbd> image, <kbd>u</kbd> units.
+  </div>
+</main>
+<div id="tip"></div>
+<script src="data/claridi_data.js"></script>
+<script src="assets/splits.js"></script>
+</body>
+</html>

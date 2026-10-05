@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ClariDi Tile Viewer</title>
+<link rel="stylesheet" href="assets/claridi.css">
+<style>
+  :root { --sz: 256px; }
+  main { padding: 12px 16px 40px; }
+  .tilehead { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; margin: 4px 0 12px; }
+  .tilehead h1 { font-size: 24px; }
+  .tilehead .meta { color: var(--ink2); }
+  .stage { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+  .refs { display: flex; gap: 8px; padding: 8px; }
+  @media (min-width: 900px) { .stage > .refs { position: sticky; top: 96px; } }
+  .vsgroup { display: flex; flex-wrap: wrap; gap: 8px; }
+  .colhead { font-family: var(--serif); font-size: 19px; text-align: center; margin: 0 0 4px; }
+  figure { margin: 0; width: var(--sz); }
+  figure .imw { position: relative; width: var(--sz); height: var(--sz); background: #111; border-radius: 4px; overflow: hidden; }
+  figure img { width: 100%; height: 100%; display: block; }
+  figure .xh { position: absolute; pointer-events: none; display: none; }
+  figure .xh::before, figure .xh::after { content: ""; position: absolute; background: rgba(255,255,255,.85); box-shadow: 0 0 0 1px rgba(0,0,0,.45); }
+  figure .xh::before { left: -9px; top: 0; width: 19px; height: 1px; }
+  figure .xh::after { top: -9px; left: 0; width: 1px; height: 19px; }
+  figcaption { font-size: 12.5px; padding: 3px 1px 0; color: var(--ink2); display: flex; justify-content: space-between; gap: 6px; }
+  figcaption .nm { font-family: var(--serif); font-size: 15.5px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  figcaption .lp { color: var(--mute); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .vs { padding: 6px; border: 2px solid transparent; border-radius: 9px; cursor: pointer; }
+  .vs.focus { border-color: var(--navy); background: var(--navy-soft); }
+  .vs.v1 .imw { box-shadow: 0 0 0 3px var(--good); }
+  .vs.v2 .imw { box-shadow: 0 0 0 3px var(--ok); }
+  .vs.v3 .imw { box-shadow: 0 0 0 3px var(--bad); }
+  .verd { display: flex; gap: 4px; margin-top: 5px; }
+  .verd button { flex: 1; font-size: 12px; padding: 2px 0; }
+  .verd button.on[data-v="1"] { background: var(--good); border-color: var(--good); color: #fff; }
+  .verd button.on[data-v="2"] { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .verd button.on[data-v="3"] { background: var(--bad); border-color: var(--bad); color: #fff; }
+  /* all-draws layout */
+  .rowsAll { display: flex; flex-direction: column; gap: 8px; }
+  .mrow { display: flex; gap: 10px; align-items: flex-start; padding: 6px; border: 2px solid transparent; border-radius: 9px; cursor: pointer; }
+  .mrow.focus { border-color: var(--navy); background: var(--navy-soft); }
+  .mrow .side { width: 150px; flex: none; }
+  .mrow .side .nm { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+  .mrow .draws { display: flex; gap: 6px; flex-wrap: wrap; }
+  .mrow .rowrefs { display: flex; gap: 6px; padding: 0 8px 0 0; margin-right: 2px; border-right: 2px solid var(--ink); }
+  .mrow.v1 { box-shadow: inset 4px 0 0 var(--good); } .mrow.v2 { box-shadow: inset 4px 0 0 var(--ok); } .mrow.v3 { box-shadow: inset 4px 0 0 var(--bad); }
+  .noteRow { margin-top: 14px; display: flex; gap: 8px; align-items: flex-start; max-width: 900px; }
+  .noteRow textarea { flex: 1; min-height: 38px; resize: vertical; }
+  .strip { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 2px; max-width: 1200px; }
+  .strip i { width: 9px; height: 9px; border-radius: 2px; background: #dedee4; cursor: pointer; }
+  .strip i.part { background: #9aa6d6; } .strip i.done { background: var(--navy); }
+  .strip i.cur { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .help { margin-top: 18px; max-width: 980px; }
+  .empty { padding: 40px; color: var(--mute); font-size: 16px; }
+  #stat { color: var(--mute); font-size: 12.5px; white-space: nowrap; }
+  @media (max-width: 700px) { :root { --sz: 150px !important; } .mrow .side { width: 90px; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="in">
+    <a class="brand" href="index.html">ClariDi <small>tile viewer</small></a>
+    <span class="ctl">specimen <select id="fSpec"><option value="">all</option></select></span>
+    <span class="ctl">tissue <select id="fTis"><option value="">all</option><option>brain</option><option>heart</option></select></span>
+    <span class="ctl">scale <select id="fSc"><option value="">all</option><option>10x10</option><option>5x5</option></select></span>
+    <span class="ctl">fold <select id="fFold"><option value="">all</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></span>
+    <span class="ctl">show <select id="fShow"><option value="">all tiles</option><option value="todo">not yet reviewed</option><option value="done">reviewed</option><option value="masked">masked only</option></select></span>
+    <span class="ctl">order <select id="fSort"><option value="pos">specimen, position</option><option value="fold">fold</option><option value="rand">shuffled</option><option value="lp">LPIPS of Ours, worst first</option></select></span>
+    <span class="ctl"><button id="prev" title="previous tile (&larr;)">&larr; prev</button><button id="next" title="next tile (&rarr;)">next &rarr;</button>
+      <button id="nextSpec" title="jump to the next specimen (n; Shift+N = previous)">next specimen &#8677;</button></span>
+    <span id="stat"></span>
+    <span class="spacer"></span>
+    <a href="wholesample.html" class="small">whole-sample viewer &rarr;</a> <a href="splits.html" class="small">splits &rarr;</a>
+  </div>
+  <div class="in" style="padding-top:0">
+    <span class="ctl" title="how many generations (draws) of each model to show; more than 1 = one row per model">generations <span class="seg" id="ngen"></span></span>
+    <span class="ctl" title="which draw to show when generations = 1">draw <span class="seg" id="draw"></span></span>
+    <span class="ctl">models <span id="models" style="display:inline-flex;gap:4px;flex-wrap:wrap"></span></span>
+    <span class="ctl">size <span class="seg" id="size"><button data-v="180">S</button><button data-v="256">M</button><button data-v="320">L</button><button data-v="400">XL</button></span></span>
+    <label class="chip" id="blindChip"><input type="checkbox" id="blind">blind</label>
+    <label class="chip" id="lpChip"><input type="checkbox" id="showLp">LPIPS</label>
+    <span class="spacer"></span>
+    <span class="ctl">reviewer <input type="text" id="reviewer" placeholder="your name" style="width:110px"></span>
+    <button id="export" class="primary" title="download all verdicts and notes as JSON">export verdicts</button>
+    <label class="ctl" style="cursor:pointer"><span style="text-decoration:underline">import</span><input type="file" id="import" accept=".json,application/json" style="display:none"></label>
+  </div>
+</div>
+<main>
+  <div class="tilehead" id="head"></div>
+  <div id="stage"></div>
+  <div class="noteRow" id="noteRow"><span class="ctl" style="padding-top:4px">note</span><textarea id="note" placeholder="optional comment on this tile (saved with the verdicts)"></textarea></div>
+  <div class="strip" id="strip" title="tiles in the current filter; dark = reviewed, light = partly, grey = not yet; click to jump"></div>
+  <div class="note help small">
+    <b>Verdict</b> per model output: <kbd>1</kbd> good &middot; <kbd>2</kbd> acceptable &middot; <kbd>3</kbd> bad &middot; <kbd>0</kbd> clear.
+    Keys apply to the highlighted output, then move to the next one (and to the next tile after the last).
+    <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> change the highlighted output &middot; <kbd>&larr;</kbd>/<kbd>&rarr;</kbd> tile &middot;
+    <kbd>n</kbd> / <kbd>Shift+N</kbd> next / previous specimen &middot; <kbd>g</kbd> 5 / 1 generations &middot; <kbd>d</kbd> next draw (1 generation) &middot; <kbd>b</kbd> blind.
+    A tile counts as reviewed when every model currently shown has a verdict.
+    Verdicts are kept in this browser only; use <em>export verdicts</em> to save a JSON file and send it back.
+    <br><b>Blind</b> shuffles the VS outputs per tile and hides model names and LPIPS; verdicts are still stored under the true model.
+    <b>LPIPS</b> (AlexNet, vs C&amp;SF; lower = closer) is shown for context only and is not the verdict.
+    Each VS output comes from the fold in which this tile was held out. Draws are independent samples (seeds 1234&ndash;1238);
+    <em>generations</em> sets how many are shown per model (one row per model), or set it to 1 to compare one chosen draw side by side.
+  </div>
+</main>
+<script src="data/claridi_data.js"></script>
+<script src="assets/tiles.js"></script>
+</body>
+</html>

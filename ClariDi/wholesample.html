@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ClariDi Whole-Sample Viewer</title>
+<link rel="stylesheet" href="assets/claridi.css">
+<style>
+  body { overflow-x: hidden; }
+  .thumbs { display: flex; gap: 6px; overflow-x: auto; padding: 0 16px 8px; scrollbar-width: thin; }
+  .thumbs button { flex: none; padding: 2px; border: 2px solid transparent; border-radius: 7px; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .thumbs button img { height: 46px; width: auto; display: block; border-radius: 3px; background: #282828; }
+  .thumbs button span { font: 11.5px var(--sans); color: var(--ink2); white-space: nowrap; }
+  .thumbs button.on { border-color: var(--navy); background: var(--navy-soft); }
+  .thumbs button.on span { color: var(--navy); font-weight: 600; }
+  #panels { display: grid; gap: 10px; padding: 10px 16px 6px; justify-content: center; align-content: start; }
+  .panel { padding: 6px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .panel.vsp { border-color: var(--navy); border-style: dashed; }
+  .panel .ph { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 0 2px; }
+  .panel .ph .t { font-family: var(--serif); font-weight: 700; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .panel .ph .s { font-size: 12px; color: var(--mute); white-space: nowrap; }
+  .vp { position: relative; overflow: hidden; border-radius: 5px; background: #1c1c1f; cursor: grab; touch-action: none; }
+  .vp.drag { cursor: grabbing; }
+  .vp canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .vp .load { position: absolute; right: 6px; bottom: 4px; font: 11px var(--sans); color: #ccc; pointer-events: none; }
+  #tip { position: fixed; z-index: 50; pointer-events: none; display: none; background: #fff; border: 1.5px solid var(--ink); border-radius: 8px; padding: 6px 9px; font-size: 12.5px; box-shadow: 0 6px 20px rgba(0,0,0,.18); max-width: 300px; }
+  #tip b { font-family: var(--mono); font-size: 12px; }
+  .below { padding: 4px 16px 30px; display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); max-width: 1200px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink2); align-items: center; }
+  .hatch { display: inline-block; width: 22px; height: 12px; border-radius: 2px; vertical-align: -2px; background: #1c1c1f repeating-linear-gradient(45deg, #55555b 0 2px, transparent 2px 6px); }
+  .msk { display: inline-block; width: 14px; height: 12px; border: 2px dashed #ffb000; border-radius: 2px; vertical-align: -2px; }
+  .zoombtns button { width: 28px; padding: 3px 0; }
+  #panels.rows { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .wrow { padding: 6px 10px 10px; max-width: 100%; }
+  .wrow.vsg { border: 2px dashed var(--navy); border-radius: var(--radius); }
+  .wrow .rh { font-family: var(--serif); font-weight: 700; font-size: 18px; padding: 0 2px 4px; }
+  .wrow .cells { display: flex; flex-wrap: wrap; gap: 8px; }
+  .wrow .rrefs { display: flex; gap: 8px; padding-right: 10px; border-right: 2px solid var(--ink); }
+  @media (max-width: 640px) { .wrow .rrefs { border-right: 0; padding-right: 0; } }
+  .panel.bare { padding: 0; }
+  .panel.bare .ph .t { font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="in">
+    <a class="brand" href="index.html">ClariDi <small>whole-sample viewer</small></a>
+    <span class="ctl">sample <select id="frame"></select></span>
+    <span class="ctl">grid <span class="seg" id="scale"><button data-v="10x10">10&times;10</button><button data-v="5x5">5&times;5</button></span></span>
+    <span class="ctl" title="how many generations (draws) of each method to show; more than 1 = one row per method">generations <span class="seg" id="ngen"></span></span>
+    <span class="ctl" title="which draw to show when generations = 1">draw <span class="seg" id="draw"></span></span>
+    <span class="ctl zoombtns"><button id="zin" title="zoom in (+)">+</button><button id="zout" title="zoom out (&minus;)">&minus;</button><button id="fit" title="fit (0)" style="width:auto;padding:3px 8px">fit</button></span>
+    <span class="spacer"></span>
+    <a href="tiles.html" class="small">tile viewer &rarr;</a> <a href="splits.html" class="small">splits &rarr;</a>
+  </div>
+  <div class="in" style="padding-top:0">
+    <span class="ctl">panels <span id="pchips" style="display:inline-flex;gap:4px;flex-wrap:wrap"></span></span>
+    <span class="ctl">overlay
+      <label class="chip" id="cGrid"><input type="checkbox" id="oGrid">tile grid</label>
+      <label class="chip" id="cFold"><input type="checkbox" id="oFold">folds</label>
+      <label class="chip" id="cMask"><input type="checkbox" id="oMask">masked</label>
+    </span>
+  </div>
+  <div class="thumbs" id="thumbs"></div>
+</div>
+<div id="panels"></div>
+<div id="tip"></div>
+<div class="below">
+  <div id="pin" class="note" style="display:none"></div>
+  <div class="legend" id="legend"></div>
+  <div class="note">
+    <b>How these mosaics are built.</b> Every tile is placed at its position in the original field of view. In the VS panels each tile is the
+    output of the model trained for the fold in which that tile was held out, so the whole mosaic consists of held-out predictions
+    (5 folds, so 5 different trained models contribute to one mosaic). Tiles were generated independently, so seams at tile borders are
+    expected and are not stitching errors; neighbouring tiles can also come from different folds (turn on <em>folds</em> to see which).
+    The 5&times;5 and 10&times;10 grids cover the same tissue at two crop sizes and are shown separately.
+    Hatched areas have no tile at this grid (background or excluded); <span class="msk"></span> marks crops that contain a masked-out region.
+    <em>Generations</em> sets how many independent draws (seeds 1234&ndash;1238) of each method are shown, one row per method; set it to 1 to compare a single chosen draw side by side.
+    <br><b>Controls.</b> Scroll to zoom, drag to pan (all panels move together), click a tile to pin its details,
+    <kbd>n</kbd>/<kbd>Shift+N</kbd> next/previous sample, <kbd>s</kbd> switch grid, <kbd>g</kbd> 5 / 1 generations, <kbd>d</kbd> next draw (1 generation), <kbd>0</kbd> fit, <kbd>+</kbd>/<kbd>&minus;</kbd> zoom.
+  </div>
+</div>
+<script src="data/claridi_data.js"></script>
+<script src="assets/wsi.js"></script>
+</body>
+</html>

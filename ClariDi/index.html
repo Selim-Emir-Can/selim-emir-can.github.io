@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ClariDi Results</title>
+<link rel="stylesheet" href="assets/claridi.css">
+<style>
+  main { max-width: 920px; margin: 0 auto; padding: 36px 16px 48px; }
+  .lede { color: var(--ink2); font-size: 15px; max-width: 760px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 22px 0 8px; }
+  .card { display: block; color: inherit; padding: 14px; transition: box-shadow .15s; }
+  .card:hover { text-decoration: none; box-shadow: 0 6px 22px rgba(0,0,0,.10); }
+  .card .im { display: flex; gap: 6px; margin-bottom: 10px; }
+  .card .im { height: 96px; }
+  .card .im img { flex: 1; min-width: 0; height: 96px; object-fit: cover; border-radius: 4px; background: #222; }
+  .card h3 { color: var(--navy); margin-bottom: 4px; }
+  .card p { margin: 0; color: var(--ink2); font-size: 13.5px; }
+  .card.disabled { opacity: .55; pointer-events: none; }
+  table { border-collapse: collapse; font-size: 13.5px; }
+  td, th { padding: 4px 12px 4px 0; text-align: left; vertical-align: top; }
+  td:first-child { white-space: nowrap; }
+  th { color: var(--mute); font-weight: 500; }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0; font-size: 13.5px; }
+  dt { font-family: var(--serif); font-weight: 700; font-size: 15px; }
+  dd { margin: 0; color: var(--ink2); }
+  footer { margin-top: 36px; color: var(--mute); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ClariDi: virtual clearing &amp; staining results</h1>
+  <p class="mute small" style="margin:0 0 14px">Unpublished results, shared for review. Please do not redistribute.</p>
+  <p class="lede">Held-out outputs of the latent Brownian-bridge diffusion models on 753 image tiles from 11 specimens
+    (brain and heart). Every tile was tested exactly once in a spatially blocked 5-fold split, so every output shown here
+    comes from a model that never saw that tile, or the spatial block containing it, during training.</p>
+
+  <div class="cards">
+    <a class="card frame" href="tiles.html">
+      <div class="im"><img src="img/ua/G_row3_col3_10x10.jpg" alt=""><img src="img/csf/G_row3_col3_10x10.jpg" alt=""><img src="img/vs/ours/G_row3_col3_10x10_0.jpg" alt=""></div>
+      <h3>Tile viewer</h3>
+      <p>One tile at a time: UA, C&amp;SF and every model's VS output side by side, with all five draws per model.
+        Filter by specimen, tissue, scale and fold, and record a verdict per tile.</p>
+    </a>
+    <a class="card frame" href="wholesample.html">
+      <div class="im"><img src="img/thumb/G_p0_10x10.jpg" alt="" style="object-fit:contain;background:#282828"></div>
+      <h3>Whole-sample viewer</h3>
+      <p>All tiles of a specimen stitched back into place: C&amp;SF next to each model's stitched VS, with synchronized
+        pan and zoom.</p>
+    </a>
+    <a class="card frame" href="splits.html">
+      <div class="im"><img src="img/split/A_p0_10x10_csf.jpg" alt="" style="object-fit:contain;background:#282828"></div>
+      <h3>Spatial splits</h3>
+      <p>For every sample and fold, which tiles were train, val and test in the spatially blocked 5-fold split.</p>
+    </a>
+    <a class="card frame" href="slides.html">
+      <div class="im"><img src="slides/img/csf.jpg" alt=""><img src="slides/img/rec_ft.jpg" alt=""><img src="slides/img/vs_refA.jpg" alt=""></div>
+      <h3>Slides</h3>
+      <p>The method (as in the manuscript's pipeline figure) and what each model variant changes: stock VQ-GAN,
+        specimen label, A stained references, B unstained context.</p>
+    </a>
+  </div>
+
+  <h2>Terminology</h2>
+  <dl>
+    <dt>UA</dt><dd>Uncleared autofluorescence: the model input.</dd>
+    <dt>C&amp;SF</dt><dd>Cleared &amp; stained fluorescence: the reference the output is compared against.</dd>
+    <dt>VS</dt><dd>Virtually stained output, generated from UA.</dd>
+  </dl>
+
+  <h2>Models</h2>
+  <table>
+    <tr><th>Model</th><th>Description</th><th>Draws shown</th></tr>
+    <tr><td>Vanilla L-BBDM</td><td>Latent BBDM with the stock ImageNet VQGAN.</td><td>5</td></tr>
+    <tr><td><b>Ours (L-BBDM)</b></td><td>Latent BBDM with the VQGAN fine-tuned on C&amp;SF (stain representation).</td><td>5</td></tr>
+    <tr><td>+ specimen label</td><td>Ours + a specimen-identity embedding.</td><td>5</td></tr>
+    <tr><td>+ A stained refs</td><td>Ours + pooled latent statistics of stained (C&amp;SF) training tiles from the same specimen (never from the tile's own neighbourhood).</td><td>5</td></tr>
+    <tr><td>+ B unstained ctx</td><td>Ours + the same, computed from unstained (UA) training tiles of the specimen.</td><td>5</td></tr>
+  </table>
+  <p class="small mute">Diffusion sampling is stochastic: each draw is an independent sample (seeds 1234&ndash;1238) for the same input.
+    All five draws are included for every model.</p>
+
+  <h2>Data</h2>
+  <table>
+    <tr><th>Tissue</th><th>Specimens</th></tr>
+    <tr><td>Brain</td><td>A, D, E, G, H, I</td></tr>
+    <tr><td>Heart</td><td>B, C, F, J, K</td></tr>
+  </table>
+  <p class="small mute">Tiles come from two overlapping crop grids per specimen (5&times;5 and 10&times;10 crops of the same field;
+    one 5&times;5 crop covers the area of 2&times;2 10&times;10 crops), all resized to 256&times;256 px. Tiles marked
+    <span class="badge masked">masked</span> contain a masked-out region.</p>
+
+  <footer>Selim Emir Can &middot; <a href="../">home</a></footer>
+</main>
+</body>
+</html>
