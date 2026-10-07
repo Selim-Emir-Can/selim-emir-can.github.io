@@ -35,6 +35,13 @@
   <p class="lede">Held-out outputs of the latent Brownian-bridge diffusion models on 753 image tiles from 11 specimens
     (brain and heart). Every tile was tested exactly once in a spatially blocked 5-fold split, so every output shown here
     comes from a model that never saw that tile, or the spatial block containing it, during training.</p>
+  <p class="small"><b>Scope: within-specimen interpolation.</b> Every specimen contributes training tiles to every fold (different regions
+    of the same specimen), so these results measure how well a model fills in held-out regions of specimens it has seen. They do not
+    measure generalization to new specimens.</p>
+  <p class="small"><b>Known issue (D part 0).</b> In this split, the piece D part 0 (21 tiles) was grouped into only 2 spatial units because its
+    5&times;5 crops straddle the 10&times;10 grid. As a result, it is tested only in folds 2 and 4 and has empty or near-empty
+    partitions in the other folds. A corrected split is <a href="splits_v2.html">proposed here</a> and will be trained next; the tables
+    below are also reported without D part 0.</p>
 
   <div class="cards">
     <a class="card frame" href="tiles.html">
@@ -62,6 +69,8 @@
     </a>
   </div>
 
+  <p class="small">Also: <a href="splits_v2.html">proposed split v2</a> (D part 0 fixed; to be checked before training).</p>
+
   <h2>Terminology</h2>
   <dl>
     <dt>UA</dt><dd>Uncleared autofluorescence: the model input.</dd>
@@ -74,12 +83,29 @@
     <tr><th>Model</th><th>Description</th><th>Draws shown</th></tr>
     <tr><td>Vanilla L-BBDM</td><td>Latent BBDM with the stock ImageNet VQGAN.</td><td>5</td></tr>
     <tr><td><b>Ours (L-BBDM)</b></td><td>Latent BBDM with the VQGAN fine-tuned on C&amp;SF (stain representation).</td><td>5</td></tr>
-    <tr><td>+ specimen label</td><td>Ours + a specimen-identity embedding.</td><td>5</td></tr>
-    <tr><td>+ A stained refs</td><td>Ours + pooled latent statistics of stained (C&amp;SF) training tiles from the same specimen (never from the tile's own neighbourhood).</td><td>5</td></tr>
+    <tr><td>+ specimen label (oracle)</td><td>Ours + a specimen-identity embedding. Oracle ablation: needs the specimen's identity and that the specimen was seen in training.</td><td>5</td></tr>
+    <tr><td>+ A stained refs (extra input)</td><td>Ours + pooled latent statistics of stained (C&amp;SF) training tiles from the same specimen (never from the tile's own neighbourhood). Extra-input ablation: needs stained tissue of the same specimen at test time.</td><td>5</td></tr>
     <tr><td>+ B unstained ctx</td><td>Ours + the same, computed from unstained (UA) training tiles of the specimen.</td><td>5</td></tr>
   </table>
   <p class="small mute">Diffusion sampling is stochastic: each draw is an independent sample (seeds 1234&ndash;1238) for the same input.
     All five draws are included for every model.</p>
+
+
+  <h2>Quantitative results (all five draws)</h2>
+  <p class="small">Predefined aggregate, fixed before looking at the numbers. Every tile is a held-out prediction, and every one of the 5 draws
+    per tile is scored against C&amp;SF at 256&times;256 px (no best-of-n, no example selection). For each draw: mean over the tiles of each
+    specimen, then the unweighted mean over the 11 specimens. Each cell is the mean &plusmn; SD across the 5 draws. The SD reflects sampling
+    variability only, not variability across training runs. Metrics are context; the visual comparison is the main evidence.
+    |&Delta; green share| = |G/(R+G) of VS &minus; G/(R+G) of C&amp;SF|, per tile.</p>
+  <h3>All 753 tiles, 11 specimens</h3>
+  <table><tr><th>method</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th><th></th><th>Δ green share</th><th>↓</th></tr><tr><td>Vanilla L-BBDM</td><td>0.529 &plusmn; 0.004</td><td>17.69 &plusmn; 0.24</td><td>0.347 &plusmn; 0.006</td><td>0.107 &plusmn; 0.009</td></tr><tr><td>Ours (L-BBDM)</td><td>0.506 &plusmn; 0.002</td><td>18.63 &plusmn; 0.09</td><td>0.492 &plusmn; 0.003</td><td>0.109 &plusmn; 0.002</td></tr><tr><td>+ specimen label (oracle)</td><td>0.460 &plusmn; 0.004</td><td>19.03 &plusmn; 0.19</td><td>0.501 &plusmn; 0.008</td><td>0.063 &plusmn; 0.005</td></tr><tr><td>+ A stained refs (extra input)</td><td>0.457 &plusmn; 0.001</td><td>18.82 &plusmn; 0.17</td><td>0.471 &plusmn; 0.010</td><td>0.070 &plusmn; 0.004</td></tr><tr><td>+ B unstained ctx</td><td>0.471 &plusmn; 0.001</td><td>19.28 &plusmn; 0.08</td><td>0.502 &plusmn; 0.007</td><td>0.098 &plusmn; 0.004</td></tr></table>
+  <h3>Without D part 0 (732 tiles)</h3>
+  <table><tr><th>method</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th><th></th><th>Δ green share</th><th>↓</th></tr><tr><td>Vanilla L-BBDM</td><td>0.529 &plusmn; 0.004</td><td>17.75 &plusmn; 0.25</td><td>0.349 &plusmn; 0.006</td><td>0.109 &plusmn; 0.009</td></tr><tr><td>Ours (L-BBDM)</td><td>0.505 &plusmn; 0.002</td><td>18.62 &plusmn; 0.10</td><td>0.492 &plusmn; 0.003</td><td>0.109 &plusmn; 0.002</td></tr><tr><td>+ specimen label (oracle)</td><td>0.458 &plusmn; 0.004</td><td>18.99 &plusmn; 0.20</td><td>0.500 &plusmn; 0.008</td><td>0.061 &plusmn; 0.005</td></tr><tr><td>+ A stained refs (extra input)</td><td>0.457 &plusmn; 0.001</td><td>18.70 &plusmn; 0.17</td><td>0.471 &plusmn; 0.010</td><td>0.070 &plusmn; 0.004</td></tr><tr><td>+ B unstained ctx</td><td>0.469 &plusmn; 0.001</td><td>19.23 &plusmn; 0.07</td><td>0.501 &plusmn; 0.007</td><td>0.096 &plusmn; 0.004</td></tr></table>
+  <details><summary class="small">Brain, heart and per-specimen LPIPS</summary>
+  <h3>Brain (6 specimens)</h3><table><tr><th>method</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th><th></th><th>Δ green share</th><th>↓</th></tr><tr><td>Vanilla L-BBDM</td><td>0.523 &plusmn; 0.007</td><td>17.94 &plusmn; 0.25</td><td>0.343 &plusmn; 0.005</td><td>0.110 &plusmn; 0.009</td></tr><tr><td>Ours (L-BBDM)</td><td>0.498 &plusmn; 0.004</td><td>18.95 &plusmn; 0.09</td><td>0.512 &plusmn; 0.003</td><td>0.116 &plusmn; 0.003</td></tr><tr><td>+ specimen label (oracle)</td><td>0.454 &plusmn; 0.004</td><td>19.60 &plusmn; 0.16</td><td>0.516 &plusmn; 0.008</td><td>0.070 &plusmn; 0.005</td></tr><tr><td>+ A stained refs (extra input)</td><td>0.436 &plusmn; 0.002</td><td>19.19 &plusmn; 0.17</td><td>0.484 &plusmn; 0.011</td><td>0.074 &plusmn; 0.003</td></tr><tr><td>+ B unstained ctx</td><td>0.457 &plusmn; 0.002</td><td>19.62 &plusmn; 0.08</td><td>0.516 &plusmn; 0.007</td><td>0.109 &plusmn; 0.004</td></tr></table>
+  <h3>Heart (5 specimens)</h3><table><tr><th>method</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th><th></th><th>Δ green share</th><th>↓</th></tr><tr><td>Vanilla L-BBDM</td><td>0.538 &plusmn; 0.003</td><td>17.39 &plusmn; 0.24</td><td>0.351 &plusmn; 0.006</td><td>0.103 &plusmn; 0.010</td></tr><tr><td>Ours (L-BBDM)</td><td>0.516 &plusmn; 0.003</td><td>18.24 &plusmn; 0.13</td><td>0.468 &plusmn; 0.004</td><td>0.100 &plusmn; 0.004</td></tr><tr><td>+ specimen label (oracle)</td><td>0.467 &plusmn; 0.004</td><td>18.35 &plusmn; 0.23</td><td>0.483 &plusmn; 0.008</td><td>0.055 &plusmn; 0.006</td></tr><tr><td>+ A stained refs (extra input)</td><td>0.482 &plusmn; 0.002</td><td>18.39 &plusmn; 0.17</td><td>0.457 &plusmn; 0.010</td><td>0.064 &plusmn; 0.005</td></tr><tr><td>+ B unstained ctx</td><td>0.487 &plusmn; 0.001</td><td>18.88 &plusmn; 0.08</td><td>0.485 &plusmn; 0.007</td><td>0.085 &plusmn; 0.004</td></tr></table>
+  <h3>Per specimen, LPIPS</h3><table><tr><th>specimen</th><th>n</th><th>Vanilla L-BBDM</th><th>Ours (L-BBDM)</th><th>+ specimen label (oracle)</th><th>+ A stained refs (extra input)</th><th>+ B unstained ctx</th></tr><tr><td>A</td><td>79</td><td>0.561 &plusmn; 0.033</td><td>0.542 &plusmn; 0.022</td><td>0.400 &plusmn; 0.008</td><td>0.340 &plusmn; 0.006</td><td>0.417 &plusmn; 0.004</td></tr><tr><td>B</td><td>55</td><td>0.576 &plusmn; 0.008</td><td>0.530 &plusmn; 0.011</td><td>0.468 &plusmn; 0.007</td><td>0.450 &plusmn; 0.003</td><td>0.472 &plusmn; 0.003</td></tr><tr><td>C</td><td>53</td><td>0.521 &plusmn; 0.006</td><td>0.474 &plusmn; 0.003</td><td>0.469 &plusmn; 0.007</td><td>0.468 &plusmn; 0.002</td><td>0.473 &plusmn; 0.002</td></tr><tr><td>D</td><td>50</td><td>0.505 &plusmn; 0.006</td><td>0.449 &plusmn; 0.004</td><td>0.447 &plusmn; 0.004</td><td>0.428 &plusmn; 0.006</td><td>0.449 &plusmn; 0.005</td></tr><tr><td>E</td><td>64</td><td>0.542 &plusmn; 0.015</td><td>0.546 &plusmn; 0.010</td><td>0.483 &plusmn; 0.006</td><td>0.469 &plusmn; 0.005</td><td>0.472 &plusmn; 0.007</td></tr><tr><td>F</td><td>50</td><td>0.545 &plusmn; 0.005</td><td>0.502 &plusmn; 0.005</td><td>0.472 &plusmn; 0.006</td><td>0.480 &plusmn; 0.004</td><td>0.479 &plusmn; 0.005</td></tr><tr><td>G</td><td>96</td><td>0.549 &plusmn; 0.003</td><td>0.521 &plusmn; 0.003</td><td>0.515 &plusmn; 0.007</td><td>0.483 &plusmn; 0.004</td><td>0.502 &plusmn; 0.004</td></tr><tr><td>H</td><td>126</td><td>0.551 &plusmn; 0.003</td><td>0.513 &plusmn; 0.001</td><td>0.505 &plusmn; 0.004</td><td>0.493 &plusmn; 0.002</td><td>0.502 &plusmn; 0.002</td></tr><tr><td>I</td><td>68</td><td>0.427 &plusmn; 0.010</td><td>0.415 &plusmn; 0.008</td><td>0.373 &plusmn; 0.005</td><td>0.404 &plusmn; 0.006</td><td>0.403 &plusmn; 0.005</td></tr><tr><td>J</td><td>59</td><td>0.512 &plusmn; 0.010</td><td>0.533 &plusmn; 0.011</td><td>0.462 &plusmn; 0.004</td><td>0.504 &plusmn; 0.004</td><td>0.522 &plusmn; 0.003</td></tr><tr><td>K</td><td>53</td><td>0.536 &plusmn; 0.018</td><td>0.540 &plusmn; 0.012</td><td>0.462 &plusmn; 0.002</td><td>0.507 &plusmn; 0.005</td><td>0.490 &plusmn; 0.005</td></tr></table>
+  </details>
 
   <h2>Data</h2>
   <table>

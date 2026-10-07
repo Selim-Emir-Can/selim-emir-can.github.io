@@ -1,14 +1,16 @@
 /* ClariDi spatial-split viewer: per sample, which tiles are train / val / test in each fold. */
 (function () {
   "use strict";
-  const D = window.CLARIDI, N = 5;
+  const D = window.CLARIDI, N = 5, V2 = window.CLARIDI_SPLIT;
+  // v2 page: patch band, assignment block and per-fold roles (incl. "excluded") over the v1 tile data
+  if (V2) D.tiles.forEach(t => { const r = V2[t.id]; if (r) Object.assign(t, { fold: r.b, u: r.u, ou: r.ou, r: r.r }); });
   const $ = s => document.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const NS = "http://www.w3.org/2000/svg";
-  const PC = { test: "#D55E00", val: "#F0E442", train: "#0072B2" };
+  const PC = { test: "#D55E00", val: "#F0E442", train: "#0072B2", excluded: "#9a9aa0" };
   const BC = ["#E69F00", "#56B4E9", "#009E73", "#F0E442", "#CC79A7"];
   const valBand = k => (k + 1 < N ? k + 1 : k - 1);
-  const part = (b, k) => (b === k ? "test" : b === valBand(k) ? "val" : "train");
+  const part = (t, k) => (t.r ? t.r[k] : t.fold === k ? "test" : t.fold === valBand(k) ? "val" : "train");
   const S = { view: "all", scale: "10x10", mod: "csf", units: true, op: 45, spec: "" };
 
   function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
@@ -41,8 +43,8 @@
   // tooltip
   const tip = $("#tip");
   function showTip(e, t) {
-    tip.innerHTML = `<b class="id">${esc(t.id)}</b><br>unit ${esc(t.u)} · band ${t.fold} · ${esc(t.sc)}${t.m ? ' · <span class="badge masked">masked</span>' : ""}` +
-      `<div class="roles">${[0, 1, 2, 3, 4].map(k => { const p = part(t.fold, k); return `<span style="background:${PC[p]};${p === "train" ? "color:#fff" : ""}">f${k} ${p}</span>`; }).join("")}</div>` +
+    tip.innerHTML = `<b class="id">${esc(t.id)}</b><br>${t.ou !== undefined ? `block ${esc(t.u)} · overlap unit ${esc(t.ou)}` : `unit ${esc(t.u)}`} · band ${t.fold} · ${esc(t.sc)}${t.m ? ' · <span class="badge masked">masked</span>' : ""}` +
+      `<div class="roles">${[0, 1, 2, 3, 4].map(k => { const p = part(t, k); return `<span style="background:${PC[p]};${p === "train" ? "color:#fff" : ""}">f${k} ${p}</span>`; }).join("")}</div>` +
       `<img src="img/ua/${t.id}.jpg" alt=""><img src="img/csf/${t.id}.jpg" alt="">`;
     tip.style.display = "block";
     const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8), y = Math.min(e.clientY + 14, innerHeight - tip.offsetHeight - 8);
@@ -70,7 +72,7 @@
     el("image", { href: `img/split/${F.id}_${S.scale}_${S.mod}.jpg`, x: x0 - F.x0, y: y0 - F.y0, width: x1 - x0, height: y1 - y0, preserveAspectRatio: "none" }, svg);
     const g = el("g", {}, svg);
     for (const t of ts) {
-      const col = k === "bands" ? BC[t.fold] : PC[part(t.fold, +k)];
+      const col = k === "bands" ? BC[t.fold] : PC[part(t, +k)];
       const r = el("rect", { class: "t", x: t.lx, y: t.ly, width: t.w, height: t.h, stroke: col }, g);
       r._col = col; rects.push(r);
       r.addEventListener("mousemove", e => showTip(e, t));
@@ -88,7 +90,7 @@
   function legend() {
     const L = $("#legend");
     const items = S.view === "bands" ? BC.map((c, i) => [c, `band ${i} = test in fold ${i}`])
-      : [[PC.test, "test"], [PC.val, "val"], [PC.train, "train"]];
+      : [[PC.test, "test"], [PC.val, "val"], [PC.train, "train"], ...(V2 ? [[PC.excluded, "excluded this fold (overlaps test/val pixels)"]] : [])];
     L.innerHTML = items.map(([c, t]) => `<span><span class="sw" style="background:${c}"></span>${t}</span>`).join("") +
       `<span><span class="sw" style="background:#1c1c1f repeating-linear-gradient(45deg,#66666c 0 2px,transparent 2px 6px)"></span>no tile</span>` +
       `<span><b>M</b> masked crop</span>${S.units ? "<span>white lines = spatial units</span>" : ""}`;
@@ -118,9 +120,9 @@
         if (all) m.innerHTML = `<div class="cap">fold ${k}</div>`;
         m.appendChild(map(F, ts, String(k), hid));
         if (k !== "bands") {
-          const n = { test: 0, val: 0, train: 0 }; ts.forEach(t => n[part(t.fold, +k)]++);
+          const n = { test: 0, val: 0, train: 0, excluded: 0 }; ts.forEach(t => n[part(t, +k)]++);
           const cnt = document.createElement("div"); cnt.className = "cnt";
-          cnt.textContent = `test ${n.test} · val ${n.val} · train ${n.train}`; m.appendChild(cnt);
+          cnt.textContent = `test ${n.test} · val ${n.val} · train ${n.train}` + (n.excluded ? ` · excl ${n.excluded}` : ""); m.appendChild(cnt);
         } else {
           const cnt = document.createElement("div"); cnt.className = "cnt";
           cnt.textContent = [0, 1, 2, 3, 4].map(b => `b${b}: ${ts.filter(t => t.fold === b).length}`).join(" · "); m.appendChild(cnt);
@@ -135,11 +137,11 @@
 
   function table() {
     const ts = D.tiles.filter(t => !S.spec || t.spec === S.spec);
-    let h = `<tr><th>fold</th><th>test band</th><th>val band</th><th>test</th><th>val</th><th>train</th><th>test brain / heart</th><th>test 10&times;10 / 5&times;5</th></tr>`;
+    let h = `<tr><th>fold</th><th>test band</th><th>val band</th><th>test</th><th>val</th><th>train</th>${V2 ? "<th>excluded</th>" : ""}<th>test brain / heart</th><th>test 10&times;10 / 5&times;5</th></tr>`;
     for (let k = 0; k < N; k++) {
-      const c = { test: 0, val: 0, train: 0 }; ts.forEach(t => c[part(t.fold, k)]++);
+      const c = { test: 0, val: 0, train: 0, excluded: 0 }; ts.forEach(t => c[part(t, k)]++);
       const te = ts.filter(t => t.fold === k);
-      h += `<tr><td>${k}</td><td>${k}</td><td>${valBand(k)}</td><td>${c.test}</td><td>${c.val}</td><td>${c.train}</td>` +
+      h += `<tr><td>${k}</td><td>${k}</td><td>${valBand(k)}</td><td>${c.test}</td><td>${c.val}</td><td>${c.train}</td>${V2 ? `<td>${c.excluded}</td>` : ""}` +
         `<td>${te.filter(t => t.tis === "brain").length} / ${te.filter(t => t.tis === "heart").length}</td>` +
         `<td>${te.filter(t => t.sc === "10x10").length} / ${te.filter(t => t.sc === "5x5").length}</td></tr>`;
     }
