@@ -57,7 +57,7 @@
     so the two grids never put overlapping pixels in different partitions). Units are ordered along the sample's long axis and cut into
     5 bands. In fold <i>k</i>, band <i>k</i> is the <b>test</b> set, the neighbouring band (<i>k</i>+1; band 3 for fold 4) is <b>val</b>, and the other
     three bands are <b>train</b>. Every tile is tested exactly once across the 5 folds, and every specimen appears in every partition.
-    Exception: D part 0 collapsed into 2 units and has empty partitions in several folds (see the <a href="splits_v2.html">proposed split v2</a>).
+    Exception: D part 0 collapsed into 2 units and has empty partitions in several folds (fixed in <a href="splits_v2.html">split v2</a>, which all current results use).
     This split tests within-specimen interpolation, not generalization to new specimens.
     A test band can share a tile edge (no pixels) with a training band.
     Hover a tile for its id, unit and role in every fold; click it to open it in the tile viewer. Hatched = no tile at this grid.

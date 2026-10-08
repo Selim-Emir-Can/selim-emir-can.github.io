@@ -37,7 +37,7 @@
 <body>
 <div class="topbar">
   <div class="in">
-    <a class="brand" href="index.html">ClariDi <small>spatial split v2 (proposed)</small></a>
+    <a class="brand" href="index.html">ClariDi <small>spatial split v2</small></a>
     <span class="ctl">view <span class="seg" id="view"></span></span>
     <span class="ctl">grid <span class="seg" id="scale"><button data-v="10x10">10&times;10</button><button data-v="5x5">5&times;5</button></span></span>
     <span class="ctl">image <span class="seg" id="mod"><button data-v="csf">C&amp;SF</button><button data-v="ua">UA</button></span></span>
@@ -50,7 +50,7 @@
 </div>
 <main>
   <div class="note" style="margin-bottom:10px">
-    <b>Proposed split v2, not trained yet.</b> Identical to the <a href="splits.html">current split</a> except for
+    <b>Split v2: all current results use this split.</b> Identical to the <a href="splits.html">original split (v1)</a> except for
     <b>D part 0</b> and <b>J</b>. Choose sample D or J to see the changes.
     <br><b>What was wrong.</b> In D part 0 the 5&times;5 crops lie on a 6&times;6 grid, so they straddle the 10&times;10 tiles. Grouping
     overlapping crops merged the whole piece into 2 units (19 + 2 tiles). As a result, D part 0 had no test tiles in folds 0, 1 and 3,
@@ -62,7 +62,7 @@
     tissue's own extent. This picked the short axis for D part 0 and J, so their bands are now cut along the long axis
     (60 tiles change band: J 44, D part 0 16).
     <br>D part 0, per fold (test / val / train / excluded): 4/2/12/3 · 4/1/7/9 · 5/0/8/8 · 4/2/9/6 · 4/2/12/3.
-    Specimen D also keeps validation tiles from part 1 in every fold. Clicking a tile opens the current results, which use the old split.
+    Specimen D also keeps validation tiles from part 1 in every fold. Clicking a tile opens its results (trained on this split).
   </div>
   <div class="legend" id="legend"></div>
   <div class="cards" id="cards"></div>
