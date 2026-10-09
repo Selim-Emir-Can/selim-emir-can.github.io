@@ -123,7 +123,7 @@
         const g = document.createElement("div"); g.className = "wrow vsg";
         g.innerHTML = `<div class="rh">VS · ${esc(MB[p.id].name)}</div><div class="cells"></div>`; box.appendChild(g);
         const cells = g.querySelector(".cells"); addRefs(cells);
-        for (let k = 0; k < S.ngen; k++) mkPanel(cells, p, k, `draw ${k}`, "bare");
+        MB[p.id].draws.slice(0, S.ngen).forEach(k => mkPanel(cells, p, k, MB[p.id].draws.length > 1 ? `draw ${k}` : "single output", "bare"));
       });
     }
     if (!P.length) box.innerHTML = `<p class="mute" style="padding:30px">Select at least one panel above.</p>`;
@@ -230,7 +230,7 @@
     o.vp.addEventListener("dblclick", e => { const w = worldAt(o, e); zoomAt(w.sx, w.sy, 2); });
   }
   function lpOf(pid, t, k) { const a = t.lp && t.lp[pid]; return a ? a[drawOf(pid, k)] : null; }
-  function lpMean(pid, t) { const a = t.lp && t.lp[pid]; if (!a) return null; const b = a.slice(0, S.ngen > 1 ? S.ngen : 5); return S.ngen > 1 ? b.reduce((x, y) => x + y, 0) / b.length : a[S.draw]; }
+  function lpMean(pid, t) { const a = t.lp && t.lp[pid]; if (!a) return null; const b = a.slice(0, S.ngen > 1 ? S.ngen : 5); return S.ngen > 1 ? b.reduce((x, y) => x + y, 0) / b.length : a[drawOf(pid, S.draw)]; }
   function tip(e, o, t) {
     const el = $("#tip");
     if (!t) { el.style.display = "none"; return; }
