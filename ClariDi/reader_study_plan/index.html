@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Reader Study Plan</title>
+<style>
+:root{--bg:#fafafa;--fg:#1d1d1f;--mute:#5f6368;--line:#d8d8de;--acc:#2a4d9b;--th:#eef0f5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161618;--fg:#ececec;--mute:#a8a8b0;--line:#3d3d44;--acc:#8fb0ff;--th:#26262c}}
+:root[data-theme="dark"]{--bg:#161618;--fg:#ececec;--mute:#a8a8b0;--line:#3d3d44;--acc:#8fb0ff;--th:#26262c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15.5px/1.6 Georgia,"Times New Roman",serif}
+main{max-width:900px;margin:0 auto;padding:32px 16px 60px}
+h1{font-size:26px;line-height:1.25;margin:0 0 14px}h2{font-size:19px;margin:30px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+p,li{max-width:80ch}code{font:13px ui-monospace,Menlo,monospace;background:var(--th);padding:1px 4px;border-radius:3px}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;font:13.5px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+th,td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}th{background:var(--th)}
+.note{font:13px system-ui,sans-serif;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin-bottom:18px}
+</style></head><body><main>
+<div class="note">Study protocol (plan only). Contains no stimuli, keys or per-tile assignments. Not for study readers: please do not open this page if you are, or may become, a reader in this study.</div>
+<h1>ClariDi reader study v3: prespecified protocol and analysis plan</h1>
+<p>Status: <strong>protocol, stimuli, packets and analysis code fixed; no reader has seen any study stimulus.</strong> Build <code>v3-20261019-102a71</code>
+(19 Oct 2026). This plan replaces v2 (18 Oct 2026, never run) and the original reader study (superseded; disclosed in the manuscript as such).
+To be deposited with a timestamp (OSF Registries or AsPredicted) <strong>before the first study reader is contacted</strong>; the deposit should include this
+file, <code>code/</code> with <code>code/SHA256SUMS.txt</code>, and the power table. The confidential keys are deposited as an embargoed component (or
+their SHA-256 is listed) and opened after data collection.</p>
+<h2>0. Changes from v2 and from the original study, and why</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Change</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Each reader sees <strong>each tile at most once in the whole session</strong> (one 2AFC trial <em>or</em> one single image). The protocol shown for a tile (spatial vs LOSO) is counterbalanced across reader sequences.</td>
+<td>In v2 every tile had two 2AFC trials (reference vs spatial, reference vs LOSO) with the identical reference image (same file code), so the repeated image revealed the reference.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2AFC set enlarged from 60 to <strong>120 tiles</strong> (60 spatial + 60 LOSO trials per reader); single-image block uses <strong>60 different tiles</strong>; 180 study tiles in total.</td>
+<td>Keeps 60 primary (spatial) trials per reader without repetition; more tiles lower tile variance. Re-run power simulation (§6): power and equivalence power equal or exceed v2 at the same reader count.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>No uncleared input is shown</strong> in either block (2AFC shows only the two stained images; single images are shown alone).</td>
+<td>Virtual outputs are pixel-aligned to the input; the registered reference has 15-50 um registration error, so readers could pick by alignment instead of realism. Same leak would exist for a single image next to its input; the original Google-Form study showed "condition input left, evaluated image right" and is therefore not comparable on this point.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>2AFC question is real-vs-virtual for two images of the same field; catch trials redesigned (intact reference vs block-shuffled reference of non-study tiles; 6 trials) plus 2 single-image catch images.</td>
+<td>The v2 catch trial ("which is the reference of <em>this</em> field", foil from the other tissue) depended on the input being shown.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Per-reader random file names</strong> (8 characters), no image file appears twice for a reader, constant file mtime, sorted zip entries with fixed timestamps; all PNGs padded to one byte size (135,168 B) with an ignored private ancillary chunk.</td>
+<td>v2 used one shared code per image across readers and trials; file size, write order or mtime could reveal the source.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Identical processing for every image</strong>: RGB uint8 256 x 256, blue channel set to 0, Pillow PNG re-encode (compress_level 9, no metadata).</td>
+<td>References have no blue signal (two fluorescence channels); outputs carry faint blue (up to 54 grey levels), a non-biological colour cue. Before padding, mean PNG sizes were 93.7 kB (reference), 98.6 kB (spatial), 94.2 kB (LOSO); after padding all are identical.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>New output-blind technical eligibility rule: exclude tiles whose <strong>reference</strong> has registration padding (&gt; 1% pure-black pixels in its 2-px frame).</td>
+<td>95 of 601 tissue-eligible tiles have black warp wedges in the reference, a cue that identifies the reference trivially. The rule reads the reference only for this technical check; no output or metric is read.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>New selection seed (20261020) because the set changed; secret presentation salt (kept with the keys) for codes, sides and order.</td>
+<td>Public seed + code reproduce the tile set (auditable) but cannot reconstruct which file is the reference.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Single-image block uses the original study's wording and <strong>3-level Low / Medium / High</strong> scales for Q1-Q3 (nuclei, membrane/structure, architecture), Q4 tissue type (Brain / Cardiac / Uncertain), Q5 fibrous/vascular pattern (Yes / No / Uncertain); the old source item is reworded to "Does this image appear to be a C&amp;SF reference or a virtual output?" (C&amp;SF reference / Virtual output / Cannot tell); tissue subtype item dropped.</td>
+<td>Continuity with the original study; "reference" instead of "ground truth" as in the manuscript; subtype item had no reliable truth labels. Analysis adapted (ordinal 1-3).</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Eligibility attestation, expertise, device and display data, per-trial response times and tab-switch time recorded in the form; export as <strong>CSV and JSON</strong>; build id checked by the analysis; pilot data refused by the main analysis.</td>
+<td>Reviewer-proofing: documented reader independence, exclusion rules that can be applied mechanically, no mixing of pilot and main data.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Reader target <strong>12</strong> (minimum 9) instead of 9 (minimum 6); A/B side balanced exactly within reader and protocol (30/30).</td>
+<td>§6.</td>
+</tr>
+</tbody>
+</table></div>
+<h2>1. Questions and hypotheses</h2>
+<ol>
+<li><strong>Primary.</strong> When two stained-looking images of the same field are shown side by side (no input), can independent expert readers identify the
+   chemically cleared-and-stained (C&amp;SF) reference better than chance for ClariDi outputs on held-out regions under the spatial split v2
+   (the setting of the manuscript's proof-of-concept claim)? H0: P(correct) = 0.5; H1: P(correct) != 0.5 (two-sided).</li>
+<li><strong>Key secondary.</strong> The same for ClariDi leave-one-specimen-out (LOSO) outputs, and the LOSO - spatial difference.</li>
+<li><strong>Secondary.</strong> Single-image source judgment, plausibility (3 items), tissue identification, inter-reader agreement, learning effect.</li>
+</ol>
+<p>Decision rule for the primary endpoint (fixed in advance, three outcomes): (a) p &lt; 0.05 and estimate &gt; 0.5: readers can discriminate;
+(b) p &lt; 0.05 and estimate &lt; 0.5: readers systematically prefer the virtual image (reported as such, not as indistinguishability);
+(c) otherwise, "not distinguishable within the margin" only if the 90% CI lies inside <strong>[0.40, 0.60]</strong> (TOST, alpha 0.05 per side); if not, inconclusive.
+Non-significance alone is never reported as equivalence.</p>
+<p><strong>Equivalence margin justification.</strong> In 2AFC, P(correct) = 0.5 + d/2 where d is the share of pairs in which the reader truly detects the
+virtual image and guesses otherwise; 0.60 corresponds to true detection in at most 20% of pairs (d' = sqrt(2) z(0.60) = 0.36). A narrower
+margin (0.45-0.55) would need roughly four times the reader-tile information (on the order of 40-50 readers at the simulated variances) and is not
+feasible; the margin was fixed before any data and is not changed.</p>
+<h2>2. Stimuli (output-blind, fixed seed)</h2>
+<ul>
+<li>Population: the 753 tiles (11 pieces, one mouse); every tile has held-out predictions under both protocols.</li>
+<li>Eligibility: not masked; UA tissue fraction &gt;= 0.75 (share of UA pixels with max(R,G,B) &gt; 13); no registration padding in the reference
+  (above). 506 of 601 tissue-eligible tiles remain.</li>
+<li>Selection: 180 tiles, no two sharing pixels: brain A, E, G, H, I 16 each and D 10 (D has only 19 eligible tiles) = 90; heart B, C, F, J, K
+  18 each = 90. Within a piece one 5x5 tile is drawn first (a 5x5 tile covers about four 10x10 tiles; a proportional 5x5 share would exhaust
+  the small pieces), overlapping 10x10 tiles are removed, the rest is drawn from 10x10 tiles. <code>numpy.random.default_rng(20261020)</code>, pieces A..K,
+  pools sorted by tile id. Block assignment within tissue: tiles ordered by piece (random within piece), every third to Block 2:
+  <strong>Block 1 (2AFC) 120 tiles (60 brain, 60 heart); Block 2 (single image) 60 tiles (30, 30)</strong>, 15 of them anchors (8 brain, 7 heart; 5 per source).</li>
+<li>Images per tile: C&amp;SF reference; ClariDi spatial-v2 output (<code>spatial_v2/sp_primary</code>) and LOSO output (<code>claridi_primary</code>), both draw 0
+  (<code>gen_idx</code> 0, seed 1234), the prespecified single generation; no draw or tile is chosen by appearance. Outputs were read only after the tile set
+  was fixed, to build the packets and the format QC.</li>
+<li>Catch stimuli: references of eligible, unselected tiles sharing no pixels with study tiles: 6 Block-1 pairs (intact vs block-shuffled, 8 x 8
+  grid of 32-px blocks permuted, same tissue) and 2 Block-2 block-shuffled images. Never analysed as data.</li>
+<li>Presentation: 256 x 256 PNG shown at 384 x 384 CSS px with the browser's default smooth interpolation, identical for all sources; processing as in §0 (6).
+  Format QC (<code>keys/stimulus_qc.csv</code>): all images 8-bit RGB 256 x 256, identical byte size, blue = 0. Content differences that remain are part of
+  what is evaluated (e.g. 2 of 202 spatial outputs show a black edge region produced by the model; outputs are never edited or excluded by appearance).</li>
+</ul>
+<h2>3. Readers, eligibility, blinding</h2>
+<ul>
+<li>Target 12 independent readers (minimum 9) covering neuroanatomy, cardiac histology and fluorescence microscopy (at least two per area where
+  possible). Recorded in the form: areas, position, years of experience, frequency of fluorescence image reading, familiarity with clearing and with
+  virtual staining / generative models, device, screen/window size, pixel ratio.</li>
+<li>Attestation in the form (yes/no, recorded, never forced): not an author; not involved in model development, output generation or image selection;
+  has not seen the manuscript/preprint, its figures or the ClariDi web pages; has not taken part in the pilot; will work alone without
+  image-analysis software, zoom tools or opening the image files.</li>
+<li>Reader IDs R01-R12 are handed out in random order (shuffle recorded with date); ID determines the sequences
+  (Block 1: i mod 2, Block 2: i mod 3), so the assignment of persons to sequences is random (basis of the Block-2 randomization test).</li>
+<li>Readers are told that the set contains C&amp;SF references and virtual outputs, not the proportions, model names, protocols or that two models exist.
+  No feedback is given at any time. Key files never leave the coordinator.</li>
+<li>Residual risks stated up front: pixel-identical images are shared across readers under different names (mitigated by the instruction not to
+  discuss images); a determined reader could analyse pixel statistics with software (forbidden by instruction and attestation).</li>
+</ul>
+<h2>4. Design and procedure</h2>
+<ul>
+<li>Offline HTML form (one per reader, own <code>images/</code> folder); works from a local folder or a web server; progress saved in browser localStorage
+  after every page; no back navigation; Part 1 locked when Part 2 starts; images hidden until both have loaded, and Next is enabled only
+  after loading and answering. Exports CSV and JSON (reader ID, build id, attestations, expertise, display, start/finish timestamps, per-trial
+  response time, choice time, tab-hidden time, displayed image width, load errors). Estimated 50-60 min, can be split.</li>
+<li><strong>Block 2 first</strong> (62 pages: 60 study images + 2 catch; one image per page, questions underneath): non-anchor source = (rank + i mod 3) mod 3,
+  i.e. 20 per source per reader and each non-anchor tile under every source across sequences; random order; one catch image per half.</li>
+<li><strong>Block 1 second</strong> (126 trials: 120 + 6 catch): protocol by (rank + i mod 2) parity, 60 + 60; reference on side A in exactly 30 of 60 trials
+  per protocol; random order, one catch trial per sixth of the block. Question: "Which image is the C&amp;SF reference?" (A / B, forced) and
+  confidence 1-4. Block 2 precedes Block 1 so that single-image judgments are made before readers have compared any pair.</li>
+</ul>
+<h2>5. Endpoints and analysis (<code>code/analyze_reader_study_v3.py</code>, frozen)</h2>
+<ul>
+<li><strong>Primary</strong>: proportion of Block-1 spatial trials in which the reference is chosen; Obuchowski-Rockette with Hillis denominator df, readers
+  and tiles random, between-reader covariance by jackknife over tiles (split-plot: reader pairs without common tiles contribute zero covariance).
+  Type I error of this exact implementation and design was verified by simulation (§6).</li>
+<li><strong>Key secondary</strong>: the same for LOSO trials; LOSO - spatial difference by logistic GEE with a protocol term (clusters = tiles).</li>
+<li><strong>Secondary</strong> (effect sizes with 95% CI; no equivalence claims from non-significance):
+  Block-2 source judgment: source x response table; prespecified test = randomization test of the chi-square statistic over reader-to-sequence
+  assignments (exact when &lt;= 50,000 assignments, otherwise 20,000 Monte Carlo draws, seed 2026; anchors fixed); supportive NominalGEE;
+  discrimination index P('reference' | reference) - P('reference' | virtual) with reader x tile bootstrap CI.
+  Plausibility Q1-Q3 (Low = 1, Medium = 2, High = 3): OrdinalGEE (rating ~ source + tissue + reader, clusters = tiles), cumulative odds ratios
+  virtual vs reference, Holm across the three items within each comparison. Tissue identification per source (never pooled). Agreement on
+  anchors: Fleiss' kappa (source, tissue), Krippendorff's alpha ordinal (Q1-Q3). Learning: accuracy vs trial position (GEE slope) and first vs
+  second half, per protocol. Accuracy by confidence (descriptive).</li>
+<li><strong>Sensitivity</strong>: reader x tile cluster bootstrap CI; trials with rt &gt;= 1 s; trials without load error or tab switch; reader-level accuracy;
+  exact binomial (descriptive, ignores clustering).</li>
+</ul>
+<h2>6. Sample size (re-run for v3; <code>SIMULATED_test/SIMULATED_design_power_v3.md</code>, 2,000 simulations per cell)</h2>
+<p>Logistic model with crossed random intercepts (tile SD 0.5, reader SD 0.3; sensitivity tile SD 1.0, reader SD 0.5), analysed with the
+prespecified OR-Hillis test on the spatial trials only.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>design (SD 0.5/0.3)</th>
+<th>readers</th>
+<th>type I</th>
+<th>power p=0.60</th>
+<th>p=0.62</th>
+<th>p=0.65</th>
+<th>P(equivalence) at p=0.50</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v2 (60 tiles, crossed, repeated reference)</td>
+<td>9</td>
+<td>0.060</td>
+<td>0.70</td>
+<td>0.85</td>
+<td>0.97</td>
+<td>0.72</td>
+</tr>
+<tr>
+<td>60 tiles without repetition (30 spatial/reader)</td>
+<td>9</td>
+<td>0.053</td>
+<td>0.55</td>
+<td>0.74</td>
+<td>0.89</td>
+<td>0.49</td>
+</tr>
+<tr>
+<td><strong>v3: 120 tiles, split</strong></td>
+<td>9</td>
+<td>0.061</td>
+<td>0.71</td>
+<td>0.88</td>
+<td>0.97</td>
+<td>0.74</td>
+</tr>
+<tr>
+<td><strong>v3: 120 tiles, split</strong></td>
+<td><strong>12</strong></td>
+<td>0.053</td>
+<td>0.86</td>
+<td>0.96</td>
+<td>1.00</td>
+<td>0.89</td>
+</tr>
+<tr>
+<td>v3, larger variances (1.0/0.5)</td>
+<td>12</td>
+<td>0.048</td>
+<td>0.53</td>
+<td>0.70</td>
+<td>0.86</td>
+<td>0.61</td>
+</tr>
+</tbody>
+</table></div>
+<p>Decision: removing the repetition with the old 60 tiles would cost about 15-25 points of power; 120 tiles restore and slightly exceed v2.
+<strong>Target 12 readers</strong> (two full replicates of the 2 x 3 sequence design; power 0.96 at P(correct) = 0.62 and 0.89 probability of
+demonstrating equivalence if readers truly guess); <strong>minimum 9</strong> (0.88 and 0.74). With fewer than 9 analysable readers the analysis is run
+and reported, but the equivalence outcome is described as underpowered. Simulated type I error is 0.05-0.06 (Monte Carlo SE 0.005), i.e. the
+OR-Hillis test can be slightly liberal with 6-9 readers; this is reported. A tile-only GEE ignores reader variance and is supportive only.</p>
+<h2>7. Exclusions, missing data, deviations (prespecified, applied mechanically by the script)</h2>
+<ul>
+<li>Reader excluded from all analyses if: &lt; 5 of 6 Block-1 catch trials correct; any eligibility attestation failed (author / involved / seen /
+  pilot participant = yes, or works alone = no); &lt; 80% of study trials answered; &gt; 20% of answered Block-1 trials faster than 1 s.
+  Reader excluded from Block-2 analyses only if both Block-2 catch images were rated "High" for architecture coherence.
+  Exclusions are reported with reasons; replacement readers receive the next unused IDs (R13...), built with the same code, before any analysis.</li>
+<li>No trial-level exclusion in the primary analysis (rt &lt; 1 s and tab switches only in sensitivity analyses). Unanswered trials are omitted
+  (complete case, no imputation). No tile is removed after outputs or responses have been seen.</li>
+<li>Response files must carry the main build id; pilot files and files from other builds are refused by the script.</li>
+<li>Any deviation (e.g. fewer readers, a reader using a phone, a form re-issued after a technical failure) is reported as a deviation with its date.</li>
+</ul>
+<h2>8. Code, pilot and data handling</h2>
+<ul>
+<li>Analysis code frozen and tested only on SIMULATED data (<code>SIMULATED_test/</code>, all files prefixed SIMULATED, generated by
+  <code>code/simulate_reader_data_v3.py</code> with known parameters, which the analysis recovers) and on dummy exports produced by headless (jsdom)
+  click-throughs of the forms. No result exists yet.</li>
+<li>Pilot: a public pilot (<code>reader_study_pilot/</code> on the ClariDi site, unlisted, noindex) uses a <strong>separate set of 36 + 5 tiles</strong> not in the study,
+  two forms (PILOT-A/B, 13 + 26 items), and carries its own build id. Pilot answers are used only to check clarity, display and timing; they are
+  never analysed with study data, and pilot participants cannot be study readers. Changes made after the pilot (wording, layout) are listed with
+  dates before the deposit; if the deposit precedes the pilot, post-pilot changes are deposited as an amendment before the first study reader starts.</li>
+</ul>
+<h2>9. Limitations stated in advance</h2>
+<p>One animal (11 pieces); single 256 x 256 tiles of 2D projections; references registered with 15-50 um error, so the 2AFC cannot evaluate
+nucleus-level correspondence and was designed to avoid alignment cues rather than to measure correspondence; readers judge realism, not
+diagnostic utility; the virtual images are one draw of a stochastic model; reader expertise is heterogeneous and self-reported.</p>
+</main></body></html>
