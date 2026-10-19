@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Tissue Image Reading PILOT-A</title>
+<style>
+:root{--bg:#f4f4f6;--fg:#1d1d1f;--mute:#5f6368;--line:#d0d0d6;--acc:#2a4d9b;--card:#fff;--warn:#8a4b00;--warnbg:#fff4e0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161618;--fg:#ececec;--mute:#a8a8b0;--line:#3d3d44;--acc:#8fb0ff;--card:#222226;--warn:#ffcf8a;--warnbg:#3a2a10}}
+:root[data-theme="dark"]{--bg:#161618;--fg:#ececec;--mute:#a8a8b0;--line:#3d3d44;--acc:#8fb0ff;--card:#222226;--warn:#ffcf8a;--warnbg:#3a2a10}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 16px}
+header .row{max-width:1000px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header .t{font-weight:600;flex:1 1 auto}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;max-width:1000px;margin:6px auto 0}.bar>div{height:100%;background:var(--acc);transition:width .2s}
+.ptxt{font-size:13px;color:var(--mute)}
+main{max-width:1000px;margin:0 auto;padding:12px 16px 40px}
+h1{font-size:21px;margin:10px 0}h2{font-size:17px;margin:4px 0 8px}
+.mute{color:var(--mute)}.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+.banner{background:var(--warnbg);color:var(--warn);border:1px solid var(--warn);border-radius:8px;padding:8px 12px;margin:10px 0;font-size:14px}
+.imgs{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin:8px 0 4px}
+.imgs figure{margin:0;text-align:center;width:384px;max-width:100%}
+.imgs img{width:384px;height:auto;aspect-ratio:1/1;max-width:100%;image-rendering:auto;border:1px solid var(--line);display:block;background:#000;visibility:hidden}
+.imgs.ready img{visibility:visible}
+.lab{font-weight:700;font-size:18px;margin-bottom:4px;letter-spacing:.04em}
+.q{margin:14px 0}.q>b{display:block;margin-bottom:4px}
+.opts{display:flex;flex-wrap:wrap;gap:4px 8px}
+.opts label{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;cursor:pointer;min-height:36px}
+.opts label:has(input:checked){border-color:var(--acc);outline:1px solid var(--acc)}
+button{font:inherit;padding:9px 20px;border-radius:6px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer;min-height:40px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button{color:#111}}
+button:disabled{opacity:.4;cursor:default}button.sec{background:transparent;color:var(--acc)}
+input[type=text],input[type=number],textarea{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);max-width:100%}
+textarea{width:100%;min-height:70px}
+footer{max-width:1000px;margin:0 auto;padding:0 16px 30px;font-size:13px;color:var(--mute)}
+footer button{padding:4px 10px;min-height:0;font-size:13px}
+#dump{width:100%;min-height:160px;font:12px ui-monospace,monospace;display:none;margin-top:8px}
+</style></head><body>
+<header><div class="row"><span class="t">Tissue image reading study <span class="mute">· reader PILOT-A</span></span><span class="ptxt" id="ptxt"></span></div>
+<div class="bar"><div id="pbar" style="width:0%"></div></div></header>
+<main><div id="mode"></div><div id="app"></div></main>
+<footer><span>Your answers are saved in this browser after every page. Backup copy of your answers:</span>
+<button class="sec" id="fcsv">Download CSV</button> <button class="sec" id="fjson">Download JSON</button> <button class="sec" id="fshow">Show as text</button>
+<textarea id="dump" readonly></textarea><div class="small" id="build"></div></footer>
+<script>
+"use strict";
+const READER="PILOT-A", MODE="pilot", BUILD="pilot-20261019-102a71", B2=[{"t":"PILOT-A-S001","i":"r923b6w2"},{"t":"PILOT-A-S002","i":"jgkaxtck"},{"t":"PILOT-A-S003","i":"t9vhvqqk"},{"t":"PILOT-A-S004","i":"r9m76tm8"},{"t":"PILOT-A-S005","i":"2gcz8zeg"},{"t":"PILOT-A-S006","i":"tu9ed7ny"},{"t":"PILOT-A-S007","i":"f2ffarpb"},{"t":"PILOT-A-S008","i":"83j2vmt7"},{"t":"PILOT-A-S009","i":"szpy46v3"},{"t":"PILOT-A-S010","i":"8rz74r3k"},{"t":"PILOT-A-S011","i":"wm66x3hc"},{"t":"PILOT-A-S012","i":"qr7fhxn3"},{"t":"PILOT-A-S013","i":"yqaus6pa"}], B1=[{"t":"PILOT-A-P001","a":"gy625spd","b":"pff76dbs"},{"t":"PILOT-A-P002","a":"2nwa8dku","b":"zfn2e8yk"},{"t":"PILOT-A-P003","a":"3qj66xec","b":"fdq52ax7"},{"t":"PILOT-A-P004","a":"vpyv8wna","b":"g44jdpnv"},{"t":"PILOT-A-P005","a":"c2ttwb62","b":"t2atttzm"},{"t":"PILOT-A-P006","a":"te78ycvs","b":"9dhwkpv2"},{"t":"PILOT-A-P007","a":"qeqv7nah","b":"wwbexdy3"},{"t":"PILOT-A-P008","a":"ueq4b957","b":"h65hhgye"},{"t":"PILOT-A-P009","a":"ut44ssf5","b":"n8j9vkr4"},{"t":"PILOT-A-P010","a":"d95jpf4m","b":"r76rde4z"},{"t":"PILOT-A-P011","a":"scajhw8u","b":"2fp3x4kn"},{"t":"PILOT-A-P012","a":"rw6kyxrj","b":"mza822dg"},{"t":"PILOT-A-P013","a":"3wwu48tp","b":"kb6wycug"},{"t":"PILOT-A-P014","a":"yzsbbams","b":"2nat7s3f"},{"t":"PILOT-A-P015","a":"y7uuu74u","b":"g34mjn9n"},{"t":"PILOT-A-P016","a":"86xfum88","b":"qprfn8z9"},{"t":"PILOT-A-P017","a":"9zkpmpaw","b":"n6mbhps9"},{"t":"PILOT-A-P018","a":"mhmb6x2t","b":"rtpsn9fn"},{"t":"PILOT-A-P019","a":"mxpt7krh","b":"qnr34dcg"},{"t":"PILOT-A-P020","a":"e8nnyy9n","b":"7e4wub7v"},{"t":"PILOT-A-P021","a":"f59cm383","b":"ggn52g26"},{"t":"PILOT-A-P022","a":"998gwba7","b":"c4xrs254"},{"t":"PILOT-A-P023","a":"er84uf8m","b":"hjbchrxs"},{"t":"PILOT-A-P024","a":"g5geewjw","b":"tgv5ygk8"},{"t":"PILOT-A-P025","a":"j3wvpr6d","b":"v7vupzfp"},{"t":"PILOT-A-P026","a":"49cbv8fn","b":"6rdqz3st"}];
+const KEY="claridi_reader_study_"+BUILD+"_"+READER, NTOT=B2.length+B1.length;
+let S=null, STORE=true;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){STORE=false}
+if(!S||S.build!==BUILD){S={format:"claridi-reader-study-v3",build:BUILD,reader:READER,mode:MODE,stage:"intro",i:0,resp:[],meta:{}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));STORE=true}catch(e){STORE=false}}
+const $=id=>document.getElementById(id), app=$("app");
+$("build").textContent="Form "+BUILD+" · "+READER;
+if(MODE==="pilot")$("mode").innerHTML='<div class="banner"><b>PILOT version.</b> This is a preliminary test of the survey. Answers given here are <b>not</b> used as study data. Please export your answers at the end and send them only if asked.</div>';
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function radios(name,opts){return '<div class="opts" role="radiogroup">'+opts.map(o=>`<label><input type="radio" name="${name}" value="${o[0]}"> ${o[1]}</label>`).join("")+'</div>'}
+function checks(name,opts){return '<div class="opts">'+opts.map(o=>`<label><input type="checkbox" name="${name}" value="${o[0]}"> ${o[1]}</label>`).join("")+'</div>'}
+function val(n){const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:null}
+function vals(n){return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e=>e.value)}
+function progress(){const n=S.resp.length;$("pbar").style.width=(100*n/NTOT).toFixed(1)+"%";
+ $("ptxt").textContent=`${n} of ${NTOT} answered`+(STORE?"":" · WARNING: this browser is not saving progress")}
+const LMH=[["low","Low"],["medium","Medium"],["high","High"]];
+let t0=0,hidden=0,hidAt=null,choiceAt=null,READY=false,CHECK=()=>{};
+document.addEventListener("visibilitychange",()=>{if(document.hidden)hidAt=performance.now();else if(hidAt!==null){hidden+=performance.now()-hidAt;hidAt=null}});
+function preload(list){list.forEach(c=>{const im=new Image();im.src="images/"+c+".png"})}
+function whenLoaded(box,cb){const ims=[...box.querySelectorAll("img")];let n=0,bad=false;
+ READY=false;const done=()=>{if(++n===ims.length){box.classList.add("ready");t0=performance.now();hidden=0;hidAt=document.hidden?t0:null;choiceAt=null;READY=true;cb(bad);CHECK()}};
+ ims.forEach(im=>{if(im.complete&&im.naturalWidth)done();else{im.onload=done;im.onerror=()=>{bad=true;done()}}})}
+function rec(o){const now=performance.now();if(hidAt!==null){hidden+=now-hidAt;hidAt=now}
+ return Object.assign({reader:READER,mode:MODE,build:BUILD},o,{rt_ms:Math.round(now-t0),hidden_ms:Math.round(hidden),answered_at:new Date().toISOString()})}
+function next(r){S.resp.push(r);S.i++;save();window.scrollTo(0,0);render()}
+function render(){progress();app.onchange=null;app.oninput=null;CHECK=()=>{};
+ const st=S.stage;
+ if(st==="intro"){app.innerHTML=`<div class="card"><h1>Tissue image reading study</h1>
+ <p>Thank you for taking part. You will look at fluorescence microscopy image tiles of fixed mouse <b>brain</b> and <b>heart</b> tissue
+ (red and green are two fluorescence channels). Some images are <b>chemically cleared-and-stained reference images</b> (C&amp;SF reference)
+ and some are <b>virtual outputs</b>: images computed by a computer model from an unstained (uncleared, autofluorescence) image of the same field.
+ The proportions are not disclosed.</p>
+ <p><b>Part 1</b> (${B2.length} images): one image per page; answer six questions about it.<br>
+ <b>Part 2</b> (${B1.length} trials): two images of the same field are shown side by side; one is the C&amp;SF reference and the other is a virtual output. Choose the reference.</p>
+ <p>There is no time limit, but please answer at a steady pace (most people need 15-40 s per page). You cannot go back to change an answer, and Part 1 is locked once Part 2 starts.
+ Please work alone, on a desktop or laptop screen if possible, and do not use image-analysis software, zoom tools or the image files themselves.
+ Your progress is saved in this browser; you can close the page and come back later in the same browser. At the end you download your answers (CSV and JSON) and send them back.
+ Estimated time: about ${Math.max(5,Math.round((B2.length*30+B1.length*10)/300)*5)} minutes; it can be split into sessions.</p>
+ <div class="q"><b>Your initials (optional)</b><input type="text" id="ini" maxlength="12" autocomplete="off"></div>
+ <div class="q"><b>Consent</b>${radios("consent",[["yes","I agree to take part and that my answers, without my name, are analysed and reported"],["no","I do not agree"]])}</div>
+ <button id="go" disabled>Continue</button></div>`;
+  app.onchange=()=>{$("go").disabled=val("consent")!=="yes"};
+  $("go").onclick=()=>{S.meta.initials=$("ini").value.trim();S.meta.consent="yes";S.meta.started=new Date().toISOString();S.stage="elig";save();render()};return}
+ if(st==="elig"){const qs=[["author","Are you an author or co-author of the ClariDi study or of a manuscript about it?"],
+  ["involved","Were you involved in developing the model, generating its outputs, or selecting the images for this survey?"],
+  ["seen","Have you seen the ClariDi manuscript or preprint, its figures, or the ClariDi project web pages?"]];
+  if(MODE==="main")qs.push(["pilot_participant","Have you taken part in the pilot (preliminary) version of this survey?"]);
+  qs.push(["works_alone","Will you complete this survey alone, without discussing the images with anyone and without image-analysis software, zoom tools or opening the image files?"]);
+  app.innerHTML=`<div class="card"><h2>Eligibility</h2><p class="mute small">Please answer truthfully; any answer is accepted and recorded.</p>`+
+  qs.map(q=>`<div class="q"><b>${q[1]}</b>${radios(q[0],[["no","No"],["yes","Yes"]])}</div>`).join("")+`<button id="go" disabled>Continue</button></div>`;
+  app.onchange=()=>{$("go").disabled=!qs.every(q=>val(q[0]))};
+  $("go").onclick=()=>{S.meta.attest={};qs.forEach(q=>S.meta.attest[q[0]]=val(q[0]));S.meta.attest_at=new Date().toISOString();S.stage="exp";save();render()};return}
+ if(st==="exp"){app.innerHTML=`<div class="card"><h2>About you</h2>
+ <div class="q"><b>Areas of expertise (select all that apply)</b>${checks("areas",[["neuroanatomy","Neuroanatomy / neuroscience"],["cardiac","Cardiac histology / cardiology"],["fluorescence","Fluorescence microscopy"],["clearing","Tissue clearing"],["pathology","Histopathology"],["computational","Computational imaging / machine learning"],["other","Other"]])}</div>
+ <div class="q"><b>Current position</b>${radios("position",[["student","Student"],["phd","PhD student"],["postdoc","Postdoc / research scientist"],["faculty","Faculty / PI"],["clinician","Clinician / pathologist"],["technician","Technician / imaging staff"],["other","Other"]])}</div>
+ <div class="q"><b>Years of experience reading microscopy images of tissue</b><input type="number" id="yrs" min="0" max="70" step="1" style="width:110px"></div>
+ <div class="q"><b>How often do you look at fluorescence microscopy images?</b>${radios("freq",[["daily","Daily"],["weekly","Weekly"],["monthly","Monthly"],["rarely","Rarely or never"]])}</div>
+ <div class="q"><b>Familiarity with tissue clearing</b>${radios("clearing",[["none","None"],["some","Some"],["extensive","Extensive"]])}</div>
+ <div class="q"><b>Familiarity with virtual staining or generative image models</b>${radios("virtual",[["none","None"],["some","Some"],["extensive","Extensive"]])}</div>
+ <div class="q"><b>Device you are using now</b>${radios("device",[["desktop","Desktop with external monitor"],["laptop","Laptop"],["tablet","Tablet"],["phone","Phone"]])}</div>
+ <button id="go" disabled>Continue</button></div>`;
+  const ok=()=>vals("areas").length&&val("position")&&$("yrs").value!==""&&val("freq")&&val("clearing")&&val("virtual")&&val("device");
+  app.oninput=app.onchange=()=>{$("go").disabled=!ok()};
+  $("go").onclick=()=>{S.meta.expertise={areas:vals("areas"),position:val("position"),years:+$("yrs").value,fluorescence_frequency:val("freq"),clearing_familiarity:val("clearing"),virtual_staining_familiarity:val("virtual"),device:val("device")};
+   S.meta.display={user_agent:navigator.userAgent,screen_w:screen.width,screen_h:screen.height,window_w:innerWidth,window_h:innerHeight,device_pixel_ratio:devicePixelRatio,
+    color_scheme:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light"};S.stage="inst2";save();render()};return}
+ if(st==="inst2"){app.innerHTML=`<div class="card"><h2>Part 1 of 2: single images</h2>
+ <p>Each page shows one stained-looking image (displayed at 384 x 384 screen pixels). Answer all six questions, then press <b>Next</b>. You cannot go back.
+ Some images are C&amp;SF references and some are virtual outputs; the unstained input is not shown.</p>
+ ${innerWidth<820?'<div class="banner">Your window is narrow ('+innerWidth+' px). The survey works, but a desktop or laptop screen of at least 820 px width is recommended.</div>':""}
+ <button id="go">Start Part 1</button></div>`;$("go").onclick=()=>{S.stage="b2";S.i=0;save();render()};return}
+ if(st==="b2"){if(S.i>=B2.length){S.stage="mid";save();render();return}
+  const x=B2[S.i];if(S.i+1<B2.length)preload([B2[S.i+1].i]);else if(B1.length)preload([B1[0].a,B1[0].b]);
+  app.innerHTML=`<div class="card"><div class="mute small">Part 1 · image ${S.i+1} of ${B2.length} · ID: ${esc(x.t.split("-").pop())}</div>
+  <div class="imgs" id="box"><figure><img src="images/${x.i}.png" alt="image to evaluate" width="384" height="384"></figure></div>
+  <div class="q"><b>Q1 · Nuclei plausibility</b>${radios("nuc",LMH)}</div>
+  <div class="q"><b>Q2 · Membrane / structural plausibility</b>${radios("mem",LMH)}</div>
+  <div class="q"><b>Q3 · Overall tissue architecture coherence</b>${radios("arc",LMH)}</div>
+  <div class="q"><b>Q4 · Tissue type</b>${radios("tis",[["brain","Brain"],["cardiac","Cardiac"],["uncertain","Uncertain"]])}</div>
+  <div class="q"><b>Q5 · Fibrous / vascular pattern detectable</b>${radios("fib",[["yes","Yes"],["no","No"],["uncertain","Uncertain"]])}</div>
+  <div class="q"><b>Q6 · Does this image appear to be a C&amp;SF reference or a virtual output?</b>${radios("src",[["reference","C&amp;SF reference"],["virtual","Virtual output"],["cannot_tell","Cannot tell"]])}</div>
+  <button id="nx" disabled>Next</button></div>`;
+  let bad=false;whenLoaded($("box"),b=>{bad=b});
+  const req=["nuc","mem","arc","tis","fib","src"];CHECK=()=>{$("nx").disabled=!(READY&&req.every(val))};app.onchange=CHECK;
+  $("nx").onclick=()=>{const im=document.querySelector("#box img");next(rec({block:2,trial:x.t,image:x.i,nuclei:val("nuc"),membrane:val("mem"),architecture:val("arc"),
+   tissue_type:val("tis"),fibrous:val("fib"),source_response:val("src"),disp_px:Math.round(im.getBoundingClientRect().width),load_error:bad?1:0}))};return}
+ if(st==="mid"){app.innerHTML=`<div class="card"><h2>Part 1 complete</h2><p>Part 2 starts next. Part 1 answers are now locked.
+ You may download a backup of your answers so far (footer buttons) and take a break; your progress is saved.</p><button id="go">Continue to Part 2</button></div>`;
+  $("go").onclick=()=>{S.stage="inst1";save();render()};return}
+ if(st==="inst1"){app.innerHTML=`<div class="card"><h2>Part 2 of 2: which image is the C&amp;SF reference?</h2>
+ <p>Each trial shows two stained-looking images of the <b>same field</b>, labelled A and B. One is the chemically cleared-and-stained (C&amp;SF) reference,
+ the other is a virtual output computed from an unstained image of that field. Choose the one you believe is the <b>C&amp;SF reference</b>, even if you have to guess,
+ and say how confident you are. You will not be told whether you were right. A few trials are easy attention checks.</p>
+ <button id="go">Start Part 2</button></div>`;$("go").onclick=()=>{S.stage="b1";S.i=0;S.meta.part2_started=new Date().toISOString();save();render()};return}
+ if(st==="b1"){if(S.i>=B1.length){S.stage="post";S.meta.part2_finished=new Date().toISOString();save();render();return}
+  const x=B1[S.i];if(S.i+1<B1.length)preload([B1[S.i+1].a,B1[S.i+1].b]);
+  app.innerHTML=`<div class="card"><div class="mute small">Part 2 · trial ${S.i+1} of ${B1.length} · ID: ${esc(x.t.split("-").pop())}</div>
+  <div class="imgs" id="box"><figure><div class="lab">A</div><img src="images/${x.a}.png" alt="image A" width="384" height="384"></figure>
+  <figure><div class="lab">B</div><img src="images/${x.b}.png" alt="image B" width="384" height="384"></figure></div>
+  <div class="q"><b>Which image is the C&amp;SF reference?</b>${radios("ch",[["A","A"],["B","B"]])}</div>
+  <div class="q"><b>How confident are you?</b>${radios("cf",[["1","1 · guessing"],["2","2"],["3","3"],["4","4 · certain"]])}</div>
+  <button id="nx" disabled>Next</button></div>`;
+  let bad=false;whenLoaded($("box"),b=>{bad=b});
+  CHECK=()=>{$("nx").disabled=!(READY&&val("ch")&&val("cf"))};app.onchange=e=>{if(e.target.name==="ch"&&READY)choiceAt=performance.now();CHECK()};
+  $("nx").onclick=()=>{const im=document.querySelector("#box img");next(rec({block:1,trial:x.t,img_A:x.a,img_B:x.b,choice:val("ch"),confidence:+val("cf"),
+   choice_ms:choiceAt?Math.round(choiceAt-t0):null,disp_px:Math.round(im.getBoundingClientRect().width),load_error:bad?1:0}))};return}
+ if(st==="post"){app.innerHTML=`<div class="card"><h2>Almost done: two optional questions</h2>
+ <div class="q"><b>Which visual features, if any, did you use to decide which image was the reference?</b><textarea id="cues" maxlength="2000"></textarea></div>
+ <div class="q"><b>Did you have any technical problems or other comments?</b><textarea id="cmt" maxlength="2000"></textarea></div>
+ <button id="go">Finish</button></div>`;
+  $("go").onclick=()=>{S.meta.cues=$("cues").value;S.meta.comments=$("cmt").value;S.meta.finished=new Date().toISOString();S.stage="done";save();render()};return}
+ app.innerHTML=`<div class="card"><h2>All done. Thank you!</h2><p>You answered ${S.resp.length} of ${NTOT} items. Please download your answers in both formats and
+ ${MODE==="pilot"?"keep them, or send them to the study coordinator if you were asked to test the pilot.":"send both files to the study coordinator by e-mail."}</p>
+ <p><button id="dcsv">Download CSV</button> <button id="djson">Download JSON</button></p>
+ <p class="small mute">If the download does not start (for example on some phones), use "Show as text" at the bottom of the page and copy the text into an e-mail.</p>
+ ${MODE==="pilot"?'<p><button class="sec" id="restart">Restart this pilot form (deletes answers in this browser)</button></p>':""}</div>`;
+ $("dcsv").onclick=()=>download("csv");$("djson").onclick=()=>download("json");
+ if(MODE==="pilot")$("restart").onclick=()=>{if(confirm("Delete all answers of this pilot form in this browser?")){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}}}
+const COLS=["reader","mode","build","block","trial","image","img_A","img_B","nuclei","membrane","architecture","tissue_type","fibrous","source_response","choice","confidence","rt_ms","choice_ms","hidden_ms","disp_px","load_error","answered_at"];
+function payload(kind){const meta=Object.assign({reader:READER,mode:MODE,build:BUILD,n_items:NTOT,n_answered:S.resp.length,stage:S.stage,exported_at:new Date().toISOString()},S.meta);
+ if(kind==="json")return JSON.stringify({format:"claridi-reader-study-v3",reader:READER,mode:MODE,build:BUILD,meta:meta,responses:S.resp},null,1);
+ const q=v=>v==null?"":(/[",\n\r]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':String(v));
+ return ["# meta: "+JSON.stringify(meta),COLS.join(",")].concat(S.resp.map(r=>COLS.map(c=>q(r[c])).join(","))).join("\n")+"\n"}
+function download(kind){const txt=payload(kind),fn=`claridi_reader_${READER}_${BUILD}_responses.${kind}`;
+ try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:kind==="csv"?"text/csv":"application/json"}));a.download=fn;document.body.appendChild(a);a.click();a.remove()}
+ catch(e){showText(kind)}}
+function showText(kind){const d=$("dump");d.style.display="block";d.value=payload(kind||"json");d.focus();d.select()}
+$("fcsv").onclick=()=>download("csv");$("fjson").onclick=()=>download("json");$("fshow").onclick=()=>showText("json");
+render();
+</script></body></html>
